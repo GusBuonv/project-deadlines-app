@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
-import * as theme from '../public/default-theme.json';
+import * as theme from '../assets/default-theme.json';
 
 export default function MyApp({ Component, pageProps }: AppProps): ReactElement {
   return (
