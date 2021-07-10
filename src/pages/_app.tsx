@@ -1,4 +1,4 @@
-import '../styles/globals.css';
+import '../styles/preflight.css'; // CSS reset from Tailwind CSS
 import type { AppProps } from 'next/app';
 import { ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
