@@ -10,6 +10,7 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   rules: {
+    'object-curly-newline': ['error', { ImportDeclaration: 'never' }],
     '@next/next/no-img-element': 0,
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx', '.tsx', '.ts'] }],
     'import/extensions': [
