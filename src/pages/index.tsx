@@ -3,9 +3,8 @@ import { ReactElement } from 'react';
 import styled from 'styled-components';
 import { GetStaticProps } from 'next';
 import DefaultLayout from '../layouts/default-layout';
-import AnchorCard, { CardProps } from '../components/anchor-card';
 import * as homeContent from '../assets/home-content.json';
-import { CenteredFlexCSS } from '../styles';
+import Project from '../components/project/project';
 
 //
 // Styles
@@ -20,19 +19,6 @@ const H1 = styled.h1`
   font-weight: 700;
 `;
 
-const FlexWrapDiv = styled.div`
-  ${CenteredFlexCSS}
-  flex-wrap: wrap;
-`;
-
-const StyledAnchorCard = styled(AnchorCard)`
-  ${FlexWrapDiv}>& {
-    width: 45%;
-    min-width: 16rem;
-    margin: 1rem;
-  }
-`;
-
 //
 // Page Component
 //
@@ -41,14 +27,12 @@ type HomeProps = {
   title: string,
   description: string,
   favicon: string,
-  cardData: CardProps[],
 };
 
 const Home = ({
   title,
   description,
   favicon,
-  cardData,
 }: HomeProps): ReactElement => (
   <DefaultLayout>
     <Head>
@@ -59,17 +43,10 @@ const Home = ({
     </Head>
 
     <H1>{title}</H1>
-
-    <FlexWrapDiv>
-      {cardData.map((props) => (
-        <StyledAnchorCard
-          key={props.title}
-          title={props.title}
-          description={props.description}
-          href={props.href}
-        />
-      ))}
-    </FlexWrapDiv>
+    <Project
+      title="My Project"
+      deadline={(new Date(2021, 6, 28)).toISOString()}
+    />
   </DefaultLayout>
 );
 
