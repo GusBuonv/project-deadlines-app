@@ -1,10 +1,14 @@
 import Head from 'next/head';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import styled from 'styled-components';
 import { GetStaticProps } from 'next';
+import { nanoid } from '@reduxjs/toolkit';
 import DefaultLayout from '../layouts/default-layout';
 import * as homeContent from '../assets/home-content.json';
 import Project from '../components/project/project';
+import { addProject, selectAllProjects } from '../components/project/projectsSlice';
+import useAppSelector from '../hooks/useAppSelector';
+import useAppDispatch from '../hooks/useAppDispatch';
 
 //
 // Styles
@@ -17,6 +21,14 @@ const H1 = styled.h1`
   line-height: 1.15;
   font-size: 4rem;
   font-weight: 700;
+`;
+
+const StyledProject = styled(Project)`
+  margin-bottom: 2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 `;
 
 //
@@ -33,22 +45,50 @@ const Home = ({
   title,
   description,
   favicon,
-}: HomeProps): ReactElement => (
-  <DefaultLayout>
-    <Head>
-      <title>{title}</title>
-      <meta name="description" content={description} />
-      <meta name="robots" content="noindex" />
-      <link rel="icon" href={favicon} />
-    </Head>
+}: HomeProps): ReactElement => {
+  const projects = useAppSelector(selectAllProjects);
+  const dispatch = useAppDispatch();
 
-    <H1>{title}</H1>
-    <Project
-      title="My Project"
-      deadline={(new Date(2021, 6, 28)).toISOString()}
-    />
-  </DefaultLayout>
-);
+  useEffect(() => {
+    if (projects.length === 0) {
+      dispatch(addProject({
+        id: nanoid(),
+        deadline: new Date(2022, 0, 0).toISOString(),
+        title: 'My Project',
+      }));
+      dispatch(addProject({
+        id: nanoid(),
+        deadline: new Date(2021, 6, 12).toISOString(),
+        title: 'My Project 2',
+      }));
+      dispatch(addProject({
+        id: nanoid(),
+        deadline: new Date(2021, 6, 16).toISOString(),
+        title: 'My Project 3',
+      }));
+    }
+  }, [projects, dispatch]);
+
+  return (
+    <DefaultLayout>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="robots" content="noindex" />
+        <link rel="icon" href={favicon} />
+      </Head>
+
+      <H1>{title}</H1>
+      {projects.map(({ id, title: projectTitle, deadline }) => (
+        <StyledProject
+          key={id}
+          title={projectTitle}
+          deadline={deadline}
+        />
+      ))}
+    </DefaultLayout>
+  );
+};
 
 export default Home;
 
