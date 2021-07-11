@@ -1,6 +1,7 @@
 import { PropsWithChildren, ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import { CenteredFlexColumnCSS } from '../styles';
+import { WithClassName } from '../util/types';
 import DefaultFooter from './partials/default-footer';
 
 //

@@ -1,5 +1,6 @@
-import { ComponentProps, ReactElement } from 'react';
-import styled, { StyledProps } from 'styled-components';
+import { ReactElement } from 'react';
+import styled from 'styled-components';
+import { WithClassName } from '../util/types';
 
 //
 // Styles

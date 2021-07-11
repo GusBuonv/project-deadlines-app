@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import styled from 'styled-components';
 import { CenteredFlexCSS } from '../../styles';
+import { WithClassName } from '../../util/types';
 
 //
 // Styles
