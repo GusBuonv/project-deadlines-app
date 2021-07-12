@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
-import { HYDRATE } from 'next-redux-wrapper';
 import makeEntityStateSelector from '../../util/makeEntityStateSelector';
 import { WithId } from '../../util/types';
 import { ProjectProps } from './project';
@@ -18,14 +17,6 @@ const projectsSlice = createSlice({
     addProject: projectsAdapter.addOne,
     removeProject: projectsAdapter.removeOne,
     updateProject: projectsAdapter.updateOne,
-  },
-  extraReducers: {
-    [HYDRATE](state, action) {
-      return {
-        ...state,
-        ...action.payload.projects,
-      };
-    },
   },
 });
 

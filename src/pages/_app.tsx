@@ -2,14 +2,21 @@ import '../styles/preflight.css'; // CSS reset from Tailwind CSS
 import type { AppProps } from 'next/app';
 import { ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
+import { Provider } from 'react-redux';
 import * as theme from '../assets/default-theme.json';
-import { wrapper } from '../store/store';
+import { useStore } from '../store/store';
 
-const App = ({ Component, pageProps }: AppProps): ReactElement => (
-  <ThemeProvider theme={theme}>
-    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-    <Component {...pageProps} />
-  </ThemeProvider>
-);
+const App = ({ Component, pageProps }: AppProps): ReactElement => {
+  const store = useStore();
 
-export default wrapper.withRedux(App);
+  return (
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </Provider>
+  );
+};
+
+export default App;
