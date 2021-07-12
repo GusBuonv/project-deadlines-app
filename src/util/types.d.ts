@@ -1,7 +1,8 @@
 import { EntityId, Slice } from '@reduxjs/toolkit';
 import { Dispatch, SetStateAction } from 'react';
 
-type WithClassName<P extends Record<string, unknown>> = (
+// eslint-disable-next-line @typescript-eslint/ban-types
+type WithClassName<P extends {}> = (
   & P
   & {
     className?: string,

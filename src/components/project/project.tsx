@@ -1,11 +1,15 @@
 import { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import { EntityId } from '@reduxjs/toolkit';
-import { VerticalListMarginCSS } from '../../styles';
+import { CenteredFlexCSS, VerticalListMarginCSS } from '../../styles';
 import { WithClassName } from '../../util/types';
 import Countdown from '../countdown';
 import DateTime from '../date-time';
 import useProject from './useProject';
+import IconButton from '../icon-button';
+import useAppDispatch from '../../hooks/useAppDispatch';
+import { removeProject } from './projectsSlice';
+import { removeProjectFromList } from '../projectList/projectListsSlice';
 
 //
 // Styles
@@ -13,7 +17,6 @@ import useProject from './useProject';
 
 const WrapperDiv = styled.div<{ $borderColor?: string }>`
   width: 100%;
-  padding: 1rem;
 
   ${VerticalListMarginCSS}
 
@@ -25,8 +28,34 @@ const WrapperDiv = styled.div<{ $borderColor?: string }>`
   display: flex;
   flex-direction: column;
 
+  overflow: hidden;
+
   @media (min-width: 481px) {
     flex-direction: row;
+  }
+`;
+
+const VisualizationDiv = styled.div<{ $borderColor?: string }>`
+  width: 100%;
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: 481px) {
+    width: auto;
+
+    flex-grow: 1;
+    flex-direction: row;
+  }
+`;
+
+const ControlsDiv = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+
+  @media (min-width: 481px) {
+    grid-auto-flow: row;
   }
 `;
 
@@ -78,6 +107,19 @@ const StyledCountdown = styled(Countdown)`
   }
 `;
 
+const StyledIconButton = styled(IconButton)<{ $bgColor: string }>`
+  width: 100%;
+
+  ${CenteredFlexCSS};
+
+  background: ${({ $bgColor }) => $bgColor};
+
+  @media (min-width: 481px) {
+    width: auto;
+    height: 100%;
+  }
+`;
+
 //
 // Component
 //
@@ -90,39 +132,74 @@ const Project = ({
   id,
 }: WithClassName<{ id: EntityId }>): ReactElement => {
   const project = useProject(id);
+  const dispatch = useAppDispatch();
 
   if (!project) {
     return (
-      <WrapperDiv className={className}>
+      <VisualizationDiv className={className}>
         <WarnDiv>Project Not Found!</WarnDiv>
-      </WrapperDiv>
+      </VisualizationDiv>
     );
   }
 
   const {
+    projectListId,
     deadline,
     title,
     displayColor,
   } = project;
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const toggleEditMode = () => {};
+
+  const deleteProject = () => {
+    dispatch(removeProject(id));
+    dispatch(removeProjectFromList({
+      id: projectListId,
+      projectId: id,
+    }));
+  };
 
   return (
     <WrapperDiv
       $borderColor={displayColor}
       className={className}
     >
-      <InfoDiv>
-        <H2 $color={displayColor}>{title}</H2>
-        <div>
-          <DueSpan>Deadline</DueSpan>
-          :
-          {' '}
-          <DateTime dateTime={deadline} />
-        </div>
-      </InfoDiv>
-      <StyledCountdown
-        end={deadline}
-        pastEndMessage="The Deadline Has Passed!"
-      />
+      <VisualizationDiv>
+        <InfoDiv>
+          <H2 $color={displayColor}>{title}</H2>
+          <div>
+            <DueSpan>Deadline</DueSpan>
+            :
+            {' '}
+            <DateTime dateTime={deadline} />
+          </div>
+        </InfoDiv>
+        <StyledCountdown
+          end={deadline}
+          passedEndMessage="The Deadline Has Passed!"
+        />
+      </VisualizationDiv>
+      <ControlsDiv>
+        <StyledIconButton
+          $bgColor="#00E676"
+          icon="pencil"
+          size="tiny"
+          label="Edit Project"
+          iconColor="#fff"
+          iconFocusColor="#2979FF"
+          onClick={toggleEditMode}
+        />
+        <StyledIconButton
+          $bgColor="#F44336"
+          icon="delete"
+          size="tiny"
+          label="Delete Project"
+          iconColor="#fff"
+          iconFocusColor="#42A5F5"
+          onClick={deleteProject}
+        />
+      </ControlsDiv>
     </WrapperDiv>
   );
 };

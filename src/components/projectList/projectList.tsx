@@ -1,10 +1,14 @@
-import { EntityId } from '@reduxjs/toolkit';
-import { ReactElement } from 'react';
+import { EntityId, nanoid } from '@reduxjs/toolkit';
 import styled, { css } from 'styled-components';
+import useAppDispatch from '../../hooks/useAppDispatch';
 import { CenteredFlexColumnCSS, VerticalListMarginCSS } from '../../styles';
 import { WithClassName } from '../../util/types';
 import Project from '../project/project';
+import { addProject, removeManyProjects } from '../project/projectsSlice';
+import { addProjectToList, emptyProjectList, removeProjectList } from './projectListsSlice';
 import useProjectList from './useProjectList';
+import LabelledIconButton from '../labelled-icon-button';
+import ControlsSpan from '../controls-span';
 
 const WrapperDiv = styled.div`
   width: 100%;
@@ -62,11 +66,20 @@ const ListWrapperDiv = styled.div<{ $borderColor?: string }>`
   }
 `;
 
+const StyledProject = styled(Project)`
+  box-shadow: 0 2px 5px #979696;
+`;
+
+interface ProjectListProps extends React.HTMLAttributes<HTMLDivElement> {
+  projectListId: EntityId
+}
+
 const ProjectList = ({
   className,
-  id,
-}: WithClassName<{ id: EntityId }>): ReactElement => {
-  const projectList = useProjectList(id);
+  projectListId,
+}: WithClassName<ProjectListProps>): JSX.Element => {
+  const projectList = useProjectList(projectListId);
+  const dispatch = useAppDispatch();
 
   if (!projectList) {
     return (
@@ -82,13 +95,67 @@ const ProjectList = ({
     projectIds,
   } = projectList;
 
+  const createProject = () => {
+    const now = new Date();
+    now.setHours(1000);
+    const projectId = nanoid();
+    dispatch(addProject({
+      projectListId,
+      id: projectId,
+      title: 'New Project',
+      deadline: now.toISOString(),
+      displayColor: '#000',
+    }));
+
+    dispatch(addProjectToList({
+      id: projectListId,
+      projectId,
+    }));
+  };
+
+  const clearList = () => {
+    dispatch(emptyProjectList(projectListId));
+    dispatch(removeManyProjects(projectIds));
+  };
+
+  const deleteList = () => {
+    dispatch(removeProjectList(projectListId));
+    dispatch(removeManyProjects(projectIds));
+  };
+
   return (
     <WrapperDiv className={className}>
       <H2 $color={displayColor}>
         {title}
       </H2>
       <ListWrapperDiv $borderColor={displayColor}>
-        {projectIds.map((projectId) => <Project key={projectId} id={projectId} />)}
+        {projectIds.map((projectId) => <StyledProject key={projectId} id={projectId} />)}
+        <ControlsSpan>
+          <LabelledIconButton
+            icon="plus-circle-outline"
+            size="small"
+            label="Add Project"
+            iconFocusColor="#00E676"
+            // onMouseUp={(event: React.MouseEvent) => { event.target.blur(); }}
+            onClick={createProject}
+          />
+          {projectList.projectIds.length > 0 ? (
+            <LabelledIconButton
+              icon="close-circle-outline"
+              size="small"
+              label="Clear List"
+              iconFocusColor="#FFA000"
+              onClick={clearList}
+            />
+          ) : undefined}
+          <LabelledIconButton
+            icon="trash-circle-outline"
+            size="small"
+            label="Delete List"
+            iconFocusColor="#F44336"
+            onClick={deleteList}
+          />
+        </ControlsSpan>
       </ListWrapperDiv>
     </WrapperDiv>
   );

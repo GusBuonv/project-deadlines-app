@@ -1,15 +1,16 @@
 import Head from 'next/head';
-import { ReactElement, useEffect } from 'react';
 import styled from 'styled-components';
 import { GetStaticProps } from 'next';
 import { nanoid } from '@reduxjs/toolkit';
 import DefaultLayout from '../layouts/default-layout';
 import * as homeContent from '../assets/home-content.json';
-import { addProject } from '../components/project/projectsSlice';
+import { removeAllProjects } from '../components/project/projectsSlice';
 import useAppSelector from '../hooks/useAppSelector';
 import useAppDispatch from '../hooks/useAppDispatch';
-import { addProjectList, selectProjectListIds } from '../components/projectList/projectListsSlice';
+import { addProjectList, removeAllProjectLists, selectProjectListIds } from '../components/projectList/projectListsSlice';
 import ProjectList from '../components/projectList/projectList';
+import LabelledIconButton from '../components/labelled-icon-button';
+import ControlsSpan from '../components/controls-span';
 
 //
 // Styles
@@ -28,49 +29,33 @@ const H1 = styled.h1`
 // Page Component
 //
 
-type HomeProps = {
+export interface HomeProps {
   title: string,
   description: string,
   favicon: string,
-};
+}
 
 const Home = ({
   title,
   description,
   favicon,
-}: HomeProps): ReactElement => {
+}: HomeProps): JSX.Element => {
   const projectLists = useAppSelector(selectProjectListIds);
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    if (projectLists.length === 0) {
-      const projectIds = [nanoid(), nanoid(), nanoid()];
-      dispatch(addProject({
-        id: projectIds[0],
-        deadline: new Date(2022, 0, 0).toISOString(),
-        title: 'My Project',
-        displayColor: '#29004b',
-      }));
-      dispatch(addProject({
-        id: projectIds[1],
-        deadline: new Date(2021, 6, 12, 8).toISOString(),
-        title: 'My Project 2',
-        displayColor: '#0c3d00',
-      }));
-      dispatch(addProject({
-        id: projectIds[2],
-        deadline: new Date(2021, 6, 16).toISOString(),
-        title: 'My Project 3',
-        displayColor: '#7b0763',
-      }));
-      dispatch(addProjectList({
-        id: nanoid(),
-        title: 'My Organization',
-        projectIds,
-        displayColor: '#140085',
-      }));
-    }
-  }, [projectLists, dispatch]);
+  const createProjectList = () => {
+    dispatch(addProjectList({
+      id: nanoid(),
+      title: 'New List',
+      displayColor: '#000',
+      projectIds: [],
+    }));
+  };
+
+  const deleteAllLists = () => {
+    dispatch(removeAllProjects());
+    dispatch(removeAllProjectLists());
+  };
 
   return (
     <DefaultLayout>
@@ -85,9 +70,27 @@ const Home = ({
       {projectLists.map((id) => (
         <ProjectList
           key={id}
-          id={id}
+          projectListId={id}
         />
       ))}
+      <ControlsSpan>
+        <LabelledIconButton
+          icon="plus-circle-outline"
+          size="medium"
+          label="Add List"
+          iconFocusColor="#00E676"
+          onClick={createProjectList}
+        />
+        {projectLists.length > 0 ? (
+          <LabelledIconButton
+            icon="trash-circle-outline"
+            size="medium"
+            label="Delete All Lists"
+            iconFocusColor="#F44336"
+            onClick={deleteAllLists}
+          />
+        ) : undefined}
+      </ControlsSpan>
     </DefaultLayout>
   );
 };

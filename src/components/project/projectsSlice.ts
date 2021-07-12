@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
-import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
+import { createSlice, createEntityAdapter, EntityId } from '@reduxjs/toolkit';
 import makeEntityStateSelector from '../../util/makeEntityStateSelector';
 import { WithId } from '../../util/types';
 
 export type ProjectEntity = WithId<{
+  projectListId: EntityId,
   title: string,
   /** ISO date time string */
   deadline: string,
@@ -21,12 +22,16 @@ const projectsSlice = createSlice({
     addProject: projectsAdapter.addOne,
     removeProject: projectsAdapter.removeOne,
     updateProject: projectsAdapter.updateOne,
+    removeManyProjects: projectsAdapter.removeMany,
+    removeAllProjects: projectsAdapter.removeAll,
   },
 });
 
 export const {
   updateProject,
   removeProject,
+  removeManyProjects,
+  removeAllProjects,
   addProject,
 } = projectsSlice.actions;
 

@@ -18,7 +18,18 @@ const projectListsSlice = createSlice({
   reducers: {
     addProjectList: projectListsAdapter.addOne,
     removeProjectList: projectListsAdapter.removeOne,
+    removeAllProjectLists: projectListsAdapter.removeAll,
     updateProjectList: projectListsAdapter.updateOne,
+    emptyProjectList(
+      state,
+      action: PayloadAction<EntityId>,
+    ) {
+      const id = action.payload;
+      const entity = state.entities[id];
+      if (entity) {
+        entity.projectIds = [];
+      }
+    },
     addProjectToList(
       state,
       action: PayloadAction<WithId<{ projectId: EntityId }>>,
@@ -52,6 +63,8 @@ export const {
   updateProjectList,
   removeProjectFromList,
   removeProjectList,
+  removeAllProjectLists,
+  emptyProjectList,
   addProjectList,
   addProjectToList,
 } = projectListsSlice.actions;

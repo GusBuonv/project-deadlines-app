@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import styled from 'styled-components';
 import useTimeUntil from '../hooks/useTimeUntil';
+import { CenteredFlexCSS } from '../styles';
 import gtDuration from '../util/gtDuration';
 import { WithClassName } from '../util/types';
 import Duration from './duration';
@@ -15,12 +16,20 @@ const StyledDuration = styled(Duration)<{
   color: ${({ $color }) => $color};
 `;
 
+const PassedEndDiv = styled.div`
+  text-align: center;
+
+  @media (min-width: 481px) {
+    text-align: right;
+  }
+`;
+
 //
 // Component
 //
 
 type CountdownProps = {
-  pastEndMessage: string,
+  passedEndMessage: string,
   end: string,
   /** Default: `true`; Enable wrapping between `"#D"` and `"#h"` */
   wraps?: boolean,
@@ -36,7 +45,7 @@ type CountdownProps = {
  * `"#h"`. Disable this behavior by setting the `wraps` prop to `false`.
  */
 const Countdown = ({
-  pastEndMessage,
+  passedEndMessage,
   className,
   end,
   wraps,
@@ -44,7 +53,7 @@ const Countdown = ({
   const duration = useTimeUntil(end);
 
   if (!duration) {
-    return <div className={className}>{pastEndMessage}</div>;
+    return <PassedEndDiv className={className}>{passedEndMessage}</PassedEndDiv>;
   }
 
   let statusColor: string;
