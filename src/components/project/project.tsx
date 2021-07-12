@@ -1,4 +1,3 @@
-import { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import { EntityId } from '@reduxjs/toolkit';
 import { CenteredFlexCSS, VerticalListMarginCSS } from '../../styles';
@@ -124,13 +123,17 @@ const StyledIconButton = styled(IconButton)<{ $bgColor: string }>`
 // Component
 //
 
+export interface ProjectProps {
+  id: EntityId,
+}
+
 /**
  * Displays information about a project including a countdown to its deadline.
  */
-const Project = ({
+const ProjectRaw = ({
   className,
   id,
-}: WithClassName<{ id: EntityId }>): ReactElement => {
+}: WithClassName<ProjectProps>): JSX.Element => {
   const project = useProject(id);
   const dispatch = useAppDispatch();
 
@@ -203,5 +206,7 @@ const Project = ({
     </WrapperDiv>
   );
 };
+
+const Project = styled(ProjectRaw)``;
 
 export default Project;

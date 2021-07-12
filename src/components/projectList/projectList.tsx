@@ -10,6 +10,10 @@ import useProjectList from './useProjectList';
 import LabelledIconButton from '../labelled-icon-button';
 import ControlsSpan from '../controls-span';
 
+//
+// Styles
+//
+
 const WrapperDiv = styled.div`
   width: 100%;
 
@@ -70,15 +74,18 @@ const StyledProject = styled(Project)`
   box-shadow: 0 2px 5px #979696;
 `;
 
-interface ProjectListProps extends React.HTMLAttributes<HTMLDivElement> {
-  projectListId: EntityId
+//
+// Component
+//
+interface ProjectListProps {
+  id: EntityId
 }
 
-const ProjectList = ({
+const ProjectListRaw = ({
   className,
-  projectListId,
+  id,
 }: WithClassName<ProjectListProps>): JSX.Element => {
-  const projectList = useProjectList(projectListId);
+  const projectList = useProjectList(id);
   const dispatch = useAppDispatch();
 
   if (!projectList) {
@@ -100,7 +107,7 @@ const ProjectList = ({
     now.setHours(1000);
     const projectId = nanoid();
     dispatch(addProject({
-      projectListId,
+      projectListId: id,
       id: projectId,
       title: 'New Project',
       deadline: now.toISOString(),
@@ -108,18 +115,18 @@ const ProjectList = ({
     }));
 
     dispatch(addProjectToList({
-      id: projectListId,
+      id,
       projectId,
     }));
   };
 
   const clearList = () => {
-    dispatch(emptyProjectList(projectListId));
+    dispatch(emptyProjectList(id));
     dispatch(removeManyProjects(projectIds));
   };
 
   const deleteList = () => {
-    dispatch(removeProjectList(projectListId));
+    dispatch(removeProjectList(id));
     dispatch(removeManyProjects(projectIds));
   };
 
@@ -160,5 +167,7 @@ const ProjectList = ({
     </WrapperDiv>
   );
 };
+
+const ProjectList = styled(ProjectListRaw)``;
 
 export default ProjectList;

@@ -1,7 +1,7 @@
 import { formatISODuration } from 'date-fns';
-import { ReactElement } from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
-import { CenteredFlexCSS } from '../styles';
+import { CenteredFlexCSS, SetMarginX } from '../styles';
 import formatDurationTerse from '../util/formatDurationTerse';
 import { WithClassName } from '../util/types';
 
@@ -15,19 +15,18 @@ const Time = styled.time<{ $wraps: boolean }>`
 `;
 
 const Span = styled.span`
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
+  ${SetMarginX('0.25rem')}
 `;
 
 //
 // Component
 //
 
-type DurationProps = {
+interface DurationProps {
   duration: Duration,
   /** Default: `true`; Enable wrapping between `"#D"` and `"#h"` */
   wraps?: boolean,
-};
+}
 
 /**
  * Semantic \<time\> element that displays a duration of time
@@ -38,11 +37,11 @@ type DurationProps = {
  * If the duration exceeds one day, the element may wrap between `"#D"` and
  * `"#h"`. Disable this behavior by setting the `wraps` prop to `false`.
  */
-const Duration = ({
+const DurationRaw = ({
   className,
   duration,
   wraps = true,
-}: WithClassName<DurationProps>): ReactElement => {
+}: WithClassName<DurationProps>): JSX.Element => {
   const durationParts = formatDurationTerse(duration);
 
   // Adjust formatting on the seconds to reduce layout jitter
@@ -53,7 +52,7 @@ const Duration = ({
   durationParts.push(secondsPart ?? '0s');
 
   // Allow longer durations to be split between 'Y M D' and 'h m s'
-  let renderedDuration: string | ReactElement;
+  let renderedDuration: string | JSX.Element;
   if (durationParts.length < 3) {
     renderedDuration = durationParts.join(' ');
   } else {
@@ -76,5 +75,7 @@ const Duration = ({
     </Time>
   );
 };
+
+const Duration = styled(memo(DurationRaw))``;
 
 export default Duration;

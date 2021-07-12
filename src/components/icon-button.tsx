@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 import { WithClassName } from '../util/types';
 import Icon, { IconType, IconSize, IconProps } from './icon';
@@ -32,19 +32,16 @@ const iconMargins: { readonly [K in IconSize]: string } = {
   large: '0',
 };
 
-export type IconButtonProps = (
-  & Omit<IconProps, 'color'>
-  & {
-    size: IconSize,
-    label: string,
-    icon: IconType,
-    iconColor?: string,
-    iconFocusColor?: string,
-    onClick: () => void,
-  }
-);
+export interface IconButtonProps extends Omit<IconProps, 'color'> {
+  size: IconSize,
+  label: string,
+  icon: IconType,
+  iconColor?: string,
+  iconFocusColor?: string,
+  onClick: () => void,
+}
 
-const IconButton = ({
+const IconButtonRaw = ({
   className,
   size,
   label,
@@ -52,7 +49,7 @@ const IconButton = ({
   iconColor,
   iconFocusColor,
   onClick,
-}: WithClassName<IconButtonProps>): ReactElement => (
+}: WithClassName<IconButtonProps>): JSX.Element => (
   <Button
     $color={iconColor}
     $focusColor={iconFocusColor}
@@ -68,5 +65,7 @@ const IconButton = ({
     />
   </Button>
 );
+
+const IconButton = styled(memo(IconButtonRaw))``;
 
 export default IconButton;

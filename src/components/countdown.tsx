@@ -1,7 +1,5 @@
-import { ReactElement } from 'react';
 import styled from 'styled-components';
 import useTimeUntil from '../hooks/useTimeUntil';
-import { CenteredFlexCSS } from '../styles';
 import gtDuration from '../util/gtDuration';
 import { WithClassName } from '../util/types';
 import Duration from './duration';
@@ -28,12 +26,12 @@ const PassedEndDiv = styled.div`
 // Component
 //
 
-type CountdownProps = {
+interface CountdownProps {
   passedEndMessage: string,
   end: string,
   /** Default: `true`; Enable wrapping between `"#D"` and `"#h"` */
   wraps?: boolean,
-};
+}
 
 /**
  * Semantic \<time\> element that displays a duration of time
@@ -44,12 +42,12 @@ type CountdownProps = {
  * If the duration exceeds one day, the element may wrap between `"#D"` and
  * `"#h"`. Disable this behavior by setting the `wraps` prop to `false`.
  */
-const Countdown = ({
+const CountdownRaw = ({
   passedEndMessage,
   className,
   end,
   wraps,
-}: WithClassName<CountdownProps>): ReactElement => {
+}: WithClassName<CountdownProps>): JSX.Element => {
   const duration = useTimeUntil(end);
 
   if (!duration) {
@@ -77,5 +75,7 @@ const Countdown = ({
     />
   );
 };
+
+const Countdown = styled(CountdownRaw)``;
 
 export default Countdown;

@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 import { CenteredFlexCSS } from '../styles';
 import { WithClassName } from '../util/types';
@@ -48,10 +48,9 @@ const labelWeights: { readonly [K in ValidIconSize]: string } = {
   large: '700',
 };
 
-type LabelledAddButtonProps = (
-  & Omit<IconButtonProps, 'size'>
-  & { size: ValidIconSize }
-);
+interface LabelledAddButtonProps extends Omit<IconButtonProps, 'size'> {
+  size: ValidIconSize
+}
 
 const LabelledIconButtonRaw = ({
   className,
@@ -61,7 +60,7 @@ const LabelledIconButtonRaw = ({
   label,
   iconFocusColor,
   onClick,
-}: WithClassName<LabelledAddButtonProps>): ReactElement => (
+}: WithClassName<LabelledAddButtonProps>): JSX.Element => (
   <WrapperSpan className={className}>
     <IconButton
       size={size}
@@ -81,6 +80,6 @@ const LabelledIconButtonRaw = ({
   </WrapperSpan>
 );
 
-const LabelledIconButton = styled(LabelledIconButtonRaw)``;
+const LabelledIconButton = styled(memo(LabelledIconButtonRaw))``;
 
 export default LabelledIconButton;

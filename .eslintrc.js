@@ -10,6 +10,7 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   rules: {
+    '@typescript-eslint/no-empty-interface': 0,
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
     'object-curly-newline': ['error', { ImportDeclaration: 'never' }],

@@ -11,6 +11,7 @@ import { addProjectList, removeAllProjectLists, selectProjectListIds } from '../
 import ProjectList from '../components/projectList/projectList';
 import LabelledIconButton from '../components/labelled-icon-button';
 import ControlsSpan from '../components/controls-span';
+import { WithClassName } from '../util/types';
 
 //
 // Styles
@@ -35,11 +36,12 @@ export interface HomeProps {
   favicon: string,
 }
 
-const Home = ({
+const HomeRaw = ({
   title,
   description,
   favicon,
-}: HomeProps): JSX.Element => {
+  className,
+}: WithClassName<HomeProps>): JSX.Element => {
   const projectLists = useAppSelector(selectProjectListIds);
   const dispatch = useAppDispatch();
 
@@ -58,7 +60,7 @@ const Home = ({
   };
 
   return (
-    <DefaultLayout>
+    <DefaultLayout className={className}>
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
@@ -70,7 +72,7 @@ const Home = ({
       {projectLists.map((id) => (
         <ProjectList
           key={id}
-          projectListId={id}
+          id={id}
         />
       ))}
       <ControlsSpan>
@@ -94,6 +96,8 @@ const Home = ({
     </DefaultLayout>
   );
 };
+
+const Home = styled(HomeRaw)``;
 
 export default Home;
 

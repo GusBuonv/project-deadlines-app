@@ -1,6 +1,10 @@
-import { ReactElement } from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 import { WithClassName } from '../util/types';
+
+//
+// Styles
+//
 
 const StyledSVG = styled.svg<{ $fill?: string }>`
   fill: ${({ $fill }) => $fill ?? 'inherit'};
@@ -29,18 +33,18 @@ const iconSizes: { readonly [K in IconSize]: number } = {
   large: 80,
 };
 
-export type IconProps = {
+export interface IconProps {
   size: IconSize,
   icon: IconType,
   color?: string,
-};
+}
 
-const Icon = ({
+const IconRaw = ({
   className,
   size,
   icon,
   color,
-}: WithClassName<IconProps>): ReactElement => {
+}: WithClassName<IconProps>): JSX.Element => {
   const px = iconSizes[size];
   const path = iconPaths[icon];
 
@@ -56,5 +60,7 @@ const Icon = ({
     </StyledSVG>
   );
 };
+
+const Icon = styled(memo(IconRaw))``;
 
 export default Icon;

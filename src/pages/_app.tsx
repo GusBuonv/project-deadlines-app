@@ -1,12 +1,14 @@
 import '../styles/preflight.css'; // CSS reset from Tailwind CSS
 import type { AppProps } from 'next/app';
-import { ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
 import { Provider } from 'react-redux';
 import { useStore } from '../store/store';
 import { defaultTheme } from '../util/theme';
 
-const App = ({ Component, pageProps }: AppProps): ReactElement => {
+const App = ({
+  Component,
+  pageProps,
+}: AppProps): JSX.Element => {
   const store = useStore();
 
   return (
