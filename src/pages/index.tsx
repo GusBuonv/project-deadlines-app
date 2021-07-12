@@ -55,16 +55,19 @@ const Home = ({
         id: nanoid(),
         deadline: new Date(2022, 0, 0).toISOString(),
         title: 'My Project',
+        displayColor: '#29004b',
       }));
       dispatch(addProject({
         id: nanoid(),
-        deadline: new Date(2021, 6, 12).toISOString(),
+        deadline: new Date(2021, 6, 12, 8).toISOString(),
         title: 'My Project 2',
+        displayColor: '#0c3d00',
       }));
       dispatch(addProject({
         id: nanoid(),
         deadline: new Date(2021, 6, 16).toISOString(),
         title: 'My Project 3',
+        displayColor: '#7b0763',
       }));
     }
   }, [projects, dispatch]);
@@ -79,11 +82,17 @@ const Home = ({
       </Head>
 
       <H1>{title}</H1>
-      {projects.map(({ id, title: projectTitle, deadline }) => (
+      {projects.map(({
+        id,
+        title: projectTitle,
+        deadline,
+        displayColor,
+      }) => (
         <StyledProject
           key={id}
           title={projectTitle}
           deadline={deadline}
+          displayColor={displayColor}
         />
       ))}
     </DefaultLayout>

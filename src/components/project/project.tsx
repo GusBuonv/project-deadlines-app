@@ -11,13 +11,13 @@ import DateTime from '../date-time';
 // Styles
 //
 
-const WrapperDiv = styled.div`
+const WrapperDiv = styled.div<{ $borderColor?: string }>`
   width: 100%;
   padding: 1rem;
   border-radius: 0.5rem;
   border-style: solid;
-  border-width: 2px;
-  border-color: #000;
+  border-width: 3px;
+  border-color: ${({ $borderColor }) => $borderColor};
 
   ${CenteredFlexCSS}
   flex-wrap: wrap;
@@ -30,11 +30,13 @@ const InfoDiv = styled.div`
   margin-right: 0.5rem;
 `;
 
-const H2 = styled.h2`
+const H2 = styled.h2<{ $color?: string }>`
   font-size: 2.5rem;
   font-weight: 700;
   line-height: 2.5rem;
   margin-bottom: 0.25rem;
+
+  color: ${({ $color }) => $color ?? 'inherit'};
 `;
 
 const DueSpan = styled.span`
@@ -57,6 +59,7 @@ export type ProjectProps = {
   title: string,
   /** ISO date time string */
   deadline: string,
+  displayColor?: string,
 };
 
 /**
@@ -66,6 +69,7 @@ const Project = ({
   className,
   title,
   deadline,
+  displayColor,
 }: WithClassName<ProjectProps>): ReactElement => {
   const timeUntilDeadline = useTimeUntil(deadline);
 
@@ -74,7 +78,7 @@ const Project = ({
     !timeUntilDeadline
     || gtDuration(timeUntilDeadline, { days: 7 })
   ) {
-    statusColor = '#006ef9';
+    statusColor = '#000';
   } else if (gtDuration(timeUntilDeadline, { days: 1 })) {
     statusColor = '#d47700';
   } else {
@@ -82,9 +86,12 @@ const Project = ({
   }
 
   return (
-    <WrapperDiv className={className}>
+    <WrapperDiv
+      $borderColor={displayColor}
+      className={className}
+    >
       <InfoDiv>
-        <H2>{title}</H2>
+        <H2 $color={displayColor}>{title}</H2>
         <div>
           <DueSpan>Deadline</DueSpan>
           :
