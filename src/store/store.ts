@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { projectsReducer, projectsSliceName } from '../components/project/projectsSlice';
+import { projectListsReducer, projectListsSliceName } from '../components/projectList/projectListsSlice';
 
 /**
  * Enumerated state version storage keys
@@ -22,6 +23,7 @@ const createStore = (preloadedState = initialState) => (
   configureStore({
     reducer: {
       [projectsSliceName]: projectsReducer,
+      [projectListsSliceName]: projectListsReducer,
     },
     preloadedState,
   })
@@ -43,6 +45,7 @@ function useEffectLoadStateFromStorage(setLoadedState: SetLoadedState) {
       }
       didLoad = true;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
 

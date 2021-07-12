@@ -5,10 +5,11 @@ import { GetStaticProps } from 'next';
 import { nanoid } from '@reduxjs/toolkit';
 import DefaultLayout from '../layouts/default-layout';
 import * as homeContent from '../assets/home-content.json';
-import Project from '../components/project/project';
-import { addProject, selectProjectIds } from '../components/project/projectsSlice';
+import { addProject } from '../components/project/projectsSlice';
 import useAppSelector from '../hooks/useAppSelector';
 import useAppDispatch from '../hooks/useAppDispatch';
+import { addProjectList, selectProjectListIds } from '../components/projectList/projectListsSlice';
+import ProjectList from '../components/projectList/projectList';
 
 //
 // Styles
@@ -21,14 +22,6 @@ const H1 = styled.h1`
   line-height: 1.15;
   font-size: 4rem;
   font-weight: 700;
-`;
-
-const StyledProject = styled(Project)`
-  margin-bottom: 2rem;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
 `;
 
 //
@@ -46,31 +39,38 @@ const Home = ({
   description,
   favicon,
 }: HomeProps): ReactElement => {
-  const projects = useAppSelector(selectProjectIds);
+  const projectLists = useAppSelector(selectProjectListIds);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (projects.length === 0) {
+    if (projectLists.length === 0) {
+      const projectIds = [nanoid(), nanoid(), nanoid()];
       dispatch(addProject({
-        id: nanoid(),
+        id: projectIds[0],
         deadline: new Date(2022, 0, 0).toISOString(),
         title: 'My Project',
         displayColor: '#29004b',
       }));
       dispatch(addProject({
-        id: nanoid(),
+        id: projectIds[1],
         deadline: new Date(2021, 6, 12, 8).toISOString(),
         title: 'My Project 2',
         displayColor: '#0c3d00',
       }));
       dispatch(addProject({
-        id: nanoid(),
+        id: projectIds[2],
         deadline: new Date(2021, 6, 16).toISOString(),
         title: 'My Project 3',
         displayColor: '#7b0763',
       }));
+      dispatch(addProjectList({
+        id: nanoid(),
+        title: 'My Organization',
+        projectIds,
+        displayColor: '#140085',
+      }));
     }
-  }, [projects, dispatch]);
+  }, [projectLists, dispatch]);
 
   return (
     <DefaultLayout>
@@ -82,8 +82,8 @@ const Home = ({
       </Head>
 
       <H1>{title}</H1>
-      {projects.map((id) => (
-        <StyledProject
+      {projectLists.map((id) => (
+        <ProjectList
           key={id}
           id={id}
         />
