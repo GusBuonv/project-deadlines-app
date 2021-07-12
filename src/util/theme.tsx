@@ -10,8 +10,16 @@ import { DefaultTheme } from 'styled-components';
 declare module 'styled-components' {
   // eslint-disable-next-line no-shadow, @typescript-eslint/no-empty-interface
   export interface DefaultTheme {
+    colors: {
+      warn: string,
+      alert: string,
+    },
   }
 }
 
 export const defaultTheme: DefaultTheme = {
+  colors: {
+    warn: '#d47700',
+    alert: '#d83737',
+  },
 };

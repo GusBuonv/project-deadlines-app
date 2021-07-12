@@ -1,4 +1,4 @@
-import { Slice } from '@reduxjs/toolkit';
+import { EntityId, Slice } from '@reduxjs/toolkit';
 import { Dispatch, SetStateAction } from 'react';
 
 type WithClassName<P extends Record<string, unknown>> = (
@@ -10,7 +10,7 @@ type WithClassName<P extends Record<string, unknown>> = (
 
 type WithId<T> = (
   & T
-  & { id: string }
+  & { id: EntityId }
 );
 
 type SetDuration = Dispatch<SetStateAction<Duration | null>>;

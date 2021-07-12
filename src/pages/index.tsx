@@ -6,7 +6,7 @@ import { nanoid } from '@reduxjs/toolkit';
 import DefaultLayout from '../layouts/default-layout';
 import * as homeContent from '../assets/home-content.json';
 import Project from '../components/project/project';
-import { addProject, selectAllProjects } from '../components/project/projectsSlice';
+import { addProject, selectProjectIds } from '../components/project/projectsSlice';
 import useAppSelector from '../hooks/useAppSelector';
 import useAppDispatch from '../hooks/useAppDispatch';
 
@@ -46,7 +46,7 @@ const Home = ({
   description,
   favicon,
 }: HomeProps): ReactElement => {
-  const projects = useAppSelector(selectAllProjects);
+  const projects = useAppSelector(selectProjectIds);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -82,17 +82,10 @@ const Home = ({
       </Head>
 
       <H1>{title}</H1>
-      {projects.map(({
-        id,
-        title: projectTitle,
-        deadline,
-        displayColor,
-      }) => (
+      {projects.map((id) => (
         <StyledProject
           key={id}
-          title={projectTitle}
-          deadline={deadline}
-          displayColor={displayColor}
+          id={id}
         />
       ))}
     </DefaultLayout>

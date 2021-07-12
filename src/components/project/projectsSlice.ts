@@ -2,9 +2,13 @@
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 import makeEntityStateSelector from '../../util/makeEntityStateSelector';
 import { WithId } from '../../util/types';
-import { ProjectProps } from './project';
 
-export type ProjectEntity = WithId<ProjectProps>
+export type ProjectEntity = WithId<{
+  title: string,
+  /** ISO date time string */
+  deadline: string,
+  displayColor?: string,
+}>
 
 const projectsAdapter = createEntityAdapter<ProjectEntity>();
 
@@ -32,5 +36,5 @@ export const projectsSliceName = projectsSlice.name;
 
 export const {
   selectById: selectProjectById,
-  selectAll: selectAllProjects,
+  selectIds: selectProjectIds,
 } = projectsAdapter.getSelectors(makeEntityStateSelector(projectsSlice));

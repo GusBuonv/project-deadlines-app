@@ -3,15 +3,15 @@ import type { AppProps } from 'next/app';
 import { ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
 import { Provider } from 'react-redux';
-import * as theme from '../assets/default-theme.json';
 import { useStore } from '../store/store';
+import { defaultTheme } from '../util/theme';
 
 const App = ({ Component, pageProps }: AppProps): ReactElement => {
   const store = useStore();
 
   return (
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={defaultTheme}>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <Component {...pageProps} />
       </ThemeProvider>

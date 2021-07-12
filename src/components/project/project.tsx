@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import styled from 'styled-components';
-import useTimeUntil from '../../hooks/useTimeUntil';
+import { EntityId } from '@reduxjs/toolkit';
 import { CenteredFlexCSS } from '../../styles';
-import gtDuration from '../../util/gtDuration';
 import { WithClassName } from '../../util/types';
-import Duration from '../duration';
+import Countdown from '../countdown';
 import DateTime from '../date-time';
+import useProject from './useProject';
 
 //
 // Styles
@@ -30,6 +30,11 @@ const InfoDiv = styled.div`
   margin-right: 0.5rem;
 `;
 
+const WarnDiv = styled.div`
+  font-size: 2.5rem;
+  color: ${({ theme }) => theme.colors.alert};
+`;
+
 const H2 = styled.h2<{ $color?: string }>`
   font-size: 2.5rem;
   font-weight: 700;
@@ -43,10 +48,9 @@ const DueSpan = styled.span`
   text-decoration: underline;
 `;
 
-const StyledDuration = styled(Duration)<{ $statusColor: string }>`
+const StyledCountdown = styled(Countdown)`
   margin-top: 0.5rem;
 
-  color: ${({ $statusColor }) => $statusColor};
   font-size: 2rem;
   font-weight: 500;
 `;
@@ -55,35 +59,28 @@ const StyledDuration = styled(Duration)<{ $statusColor: string }>`
 // Component
 //
 
-export type ProjectProps = {
-  title: string,
-  /** ISO date time string */
-  deadline: string,
-  displayColor?: string,
-};
-
 /**
  * Displays information about a project including a countdown to its deadline.
  */
 const Project = ({
   className,
-  title,
-  deadline,
-  displayColor,
-}: WithClassName<ProjectProps>): ReactElement => {
-  const timeUntilDeadline = useTimeUntil(deadline);
+  id,
+}: WithClassName<{ id: EntityId }>): ReactElement => {
+  const project = useProject(id);
 
-  let statusColor: string;
-  if (
-    !timeUntilDeadline
-    || gtDuration(timeUntilDeadline, { days: 7 })
-  ) {
-    statusColor = '#000';
-  } else if (gtDuration(timeUntilDeadline, { days: 1 })) {
-    statusColor = '#d47700';
-  } else {
-    statusColor = '#d83737';
+  if (!project) {
+    return (
+      <WrapperDiv className={className}>
+        <WarnDiv>Project Not Found!</WarnDiv>
+      </WrapperDiv>
+    );
   }
+
+  const {
+    deadline,
+    title,
+    displayColor,
+  } = project;
 
   return (
     <WrapperDiv
@@ -99,14 +96,10 @@ const Project = ({
           <DateTime dateTime={deadline} />
         </div>
       </InfoDiv>
-      {timeUntilDeadline
-        ? (
-          <StyledDuration
-            $statusColor={statusColor}
-            duration={timeUntilDeadline}
-          />
-        )
-        : <div>Deadline Passed!</div>}
+      <StyledCountdown
+        end={deadline}
+        pastEndMessage="The Deadline Has Passed!"
+      />
     </WrapperDiv>
   );
 };

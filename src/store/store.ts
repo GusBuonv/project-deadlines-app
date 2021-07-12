@@ -31,8 +31,10 @@ export type AppStore = ReturnType<typeof createStore>;
 export type RootState = ReturnType<AppStore['getState']>;
 export type AppDispatch = AppStore['dispatch'];
 
+type SetLoadedState = Dispatch<SetStateAction<RootState>>;
+
 let didLoad = false;
-function useEffectLoadStateFromStorage(setLoadedState: Dispatch<SetStateAction<RootState>>) {
+function useEffectLoadStateFromStorage(setLoadedState: SetLoadedState) {
   useEffect(() => {
     if (!didLoad) {
       const serializedState = window.localStorage.getItem(stateStorageKey);
@@ -41,7 +43,7 @@ function useEffectLoadStateFromStorage(setLoadedState: Dispatch<SetStateAction<R
       }
       didLoad = true;
     }
-  }, [setLoadedState]);
+  }, []);
 }
 
 function useEffectPersistStateInStorage(store: AppStore) {
