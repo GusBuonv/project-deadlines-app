@@ -35,6 +35,11 @@ export default class DurationStateController {
    * @param end The time whose remaining time until is the desired duration
    */
   subscribe(setDuration: SetDuration, end: Date): void {
+    // Skip subscription if the end date has passed
+    if (new Date() > end) {
+      return;
+    }
+
     if (!this.isDispatching) {
       this.startDispatching();
     }
