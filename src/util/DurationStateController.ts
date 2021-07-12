@@ -1,3 +1,5 @@
+// eslint-disable-next-line camelcase
+import { unstable_batchedUpdates } from 'react-dom';
 import getCurrentTimeUntil from './getCurrentTimeUntil';
 import { SetDuration } from './types';
 
@@ -63,13 +65,15 @@ export default class DurationStateController {
   }
 
   private dispatchUpdates = () => {
-    this.activeUpdates.forEach((end, setDuration) => {
-      setDuration(() => {
-        const duration = getCurrentTimeUntil(end);
-        if (!duration) {
-          this.unsubscribe(setDuration);
-        }
-        return duration;
+    unstable_batchedUpdates(() => {
+      this.activeUpdates.forEach((end, setDuration) => {
+        setDuration(() => {
+          const duration = getCurrentTimeUntil(end);
+          if (!duration) {
+            this.unsubscribe(setDuration);
+          }
+          return duration;
+        });
       });
     });
   };
