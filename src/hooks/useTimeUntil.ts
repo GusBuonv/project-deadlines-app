@@ -15,7 +15,7 @@ import DurationStateController from '../util/DurationStateController';
  * @returns A state object representing the time remaining until the input date
  */
 export default function useTimeUntil(end: string): Duration | null {
-  const [duration, setDuration] = useState(getCurrentTimeUntil(new Date(end)));
+  const [duration, setDuration] = useState(() => getCurrentTimeUntil(new Date(end)));
 
   useEffect(() => {
     DurationStateController.instance.subscribe(setDuration, new Date(end));
