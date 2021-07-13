@@ -81,6 +81,7 @@ const HomeRaw = ({
           size="medium"
           label="Add List"
           iconFocusColor="#00E676"
+          onMouseUp={({ currentTarget }) => currentTarget.blur()}
           onClick={createProjectList}
         />
         {projectLists.length > 0 ? (

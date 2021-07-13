@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, MouseEventHandler } from 'react';
 import styled from 'styled-components';
 import { WithClassName } from '../util/types';
 import Icon, { IconType, IconSize, IconProps } from './icon';
@@ -38,7 +38,8 @@ export interface IconButtonProps extends Omit<IconProps, 'color'> {
   icon: IconType,
   iconColor?: string,
   iconFocusColor?: string,
-  onClick: () => void,
+  onMouseUp?: MouseEventHandler<HTMLButtonElement>,
+  onClick?: MouseEventHandler<HTMLButtonElement>,
 }
 
 const IconButtonRaw = ({
@@ -49,6 +50,7 @@ const IconButtonRaw = ({
   iconColor,
   iconFocusColor,
   onClick,
+  onMouseUp,
 }: WithClassName<IconButtonProps>): JSX.Element => (
   <Button
     $color={iconColor}
@@ -57,6 +59,7 @@ const IconButtonRaw = ({
     type="button"
     aria-label={label}
     onClick={onClick}
+    onMouseUp={onMouseUp}
   >
     <StyledIcon
       $margin={iconMargins[size]}

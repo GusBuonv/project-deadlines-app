@@ -143,7 +143,7 @@ const ProjectListRaw = ({
             size="small"
             label="Add Project"
             iconFocusColor="#00E676"
-            // onMouseUp={(event: React.MouseEvent) => { event.target.blur(); }}
+            onMouseUp={({ currentTarget }) => currentTarget.blur()}
             onClick={createProject}
           />
           {projectList.projectIds.length > 0 ? (

@@ -59,6 +59,7 @@ const LabelledIconButtonRaw = ({
   iconColor,
   label,
   iconFocusColor,
+  onMouseUp,
   onClick,
 }: WithClassName<LabelledAddButtonProps>): JSX.Element => (
   <WrapperSpan className={className}>
@@ -68,6 +69,7 @@ const LabelledIconButtonRaw = ({
       iconColor={iconColor}
       label={label}
       iconFocusColor={iconFocusColor}
+      onMouseUp={onMouseUp}
       onClick={onClick}
     />
     <LabelSpan
