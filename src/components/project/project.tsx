@@ -7,8 +7,7 @@ import DateTime from '../date-time';
 import useProject from './useProject';
 import IconButton from '../icon-button';
 import useAppDispatch from '../../hooks/useAppDispatch';
-import { removeProject } from './projectsSlice';
-import { removeProjectFromList } from '../projectList/projectListsSlice';
+import removeProjectInList from '../../store/actions/removeProjectInList';
 
 //
 // Styles
@@ -144,7 +143,6 @@ const ProjectRaw = ({
   }
 
   const {
-    projectListId,
     deadline,
     title,
     displayColor,
@@ -153,13 +151,7 @@ const ProjectRaw = ({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const toggleEditMode = () => {};
 
-  const deleteProject = () => {
-    dispatch(removeProject(id));
-    dispatch(removeProjectFromList({
-      id: projectListId,
-      projectId: id,
-    }));
-  };
+  const deleteProject = () => dispatch(removeProjectInList(project));
 
   return (
     <WrapperDiv

@@ -4,15 +4,15 @@ import { GetStaticProps } from 'next';
 import { nanoid } from '@reduxjs/toolkit';
 import DefaultLayout from '../layouts/default-layout';
 import * as homeContent from '../assets/home-content.json';
-import { removeAllProjects } from '../components/project/projectsSlice';
 import useAppSelector from '../hooks/useAppSelector';
 import useAppDispatch from '../hooks/useAppDispatch';
-import { addProjectList, removeAllProjectLists, selectProjectListIds } from '../components/projectList/projectListsSlice';
+import { addProjectList, selectProjectListIds } from '../components/projectList/projectListsSlice';
 import ProjectList from '../components/projectList/projectList';
 import LabelledIconButton from '../components/labelled-icon-button';
 import ControlsSpan from '../components/controls-span';
 import { WithClassName } from '../util/types';
 import { VerticalListMarginCSS } from '../styles';
+import destroyAllProjectLists from '../store/actions/destroyAllProjectLists';
 
 //
 // Styles
@@ -50,19 +50,14 @@ const HomeRaw = ({
   const projectLists = useAppSelector(selectProjectListIds);
   const dispatch = useAppDispatch();
 
-  const createProjectList = () => {
-    dispatch(addProjectList({
-      id: nanoid(),
-      title: 'New List',
-      displayColor: '#000',
-      projectIds: [],
-    }));
-  };
+  const createProjectList = () => dispatch(addProjectList({
+    id: nanoid(),
+    title: 'New List',
+    displayColor: '#000',
+    projectIds: [],
+  }));
 
-  const deleteAllLists = () => {
-    dispatch(removeAllProjects());
-    dispatch(removeAllProjectLists());
-  };
+  const deleteAllLists = () => dispatch(destroyAllProjectLists());
 
   return (
     <DefaultLayout className={className}>

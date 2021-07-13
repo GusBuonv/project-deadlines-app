@@ -4,11 +4,12 @@ import useAppDispatch from '../../hooks/useAppDispatch';
 import { CenteredFlexColumnCSS, VerticalListMarginCSS } from '../../styles';
 import { WithClassName } from '../../util/types';
 import Project from '../project/project';
-import { addProject, removeManyProjects } from '../project/projectsSlice';
-import { addProjectToList, emptyProjectList, removeProjectList } from './projectListsSlice';
 import useProjectList from './useProjectList';
 import LabelledIconButton from '../labelled-icon-button';
 import ControlsSpan from '../controls-span';
+import createProjectInList from '../../store/actions/createProjectInList';
+import removeAllProjectsInList from '../../store/actions/removeAllProjectsInList';
+import destroyProjectList from '../../store/actions/destroyProjectList';
 
 //
 // Styles
@@ -102,33 +103,12 @@ const ProjectListRaw = ({
     projectIds,
   } = projectList;
 
-  const createProject = () => {
-    const now = new Date();
-    now.setHours(1000);
-    const projectId = nanoid();
-    dispatch(addProject({
-      projectListId: id,
-      id: projectId,
-      title: 'New Project',
-      deadline: now.toISOString(),
-      displayColor: '#000',
-    }));
-
-    dispatch(addProjectToList({
-      id,
-      projectId,
-    }));
-  };
-
-  const clearList = () => {
-    dispatch(emptyProjectList(id));
-    dispatch(removeManyProjects(projectIds));
-  };
-
-  const deleteList = () => {
-    dispatch(removeProjectList(id));
-    dispatch(removeManyProjects(projectIds));
-  };
+  const createProject = () => dispatch(createProjectInList({
+    projectId: nanoid(),
+    projectListId: id,
+  }));
+  const clearList = () => dispatch(removeAllProjectsInList(projectList));
+  const deleteList = () => dispatch(destroyProjectList(projectList));
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
