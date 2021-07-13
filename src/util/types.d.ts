@@ -9,10 +9,9 @@ type WithClassName<P extends {}> = (
   }
 );
 
-type WithId<T> = (
-  & T
-  & { id: EntityId }
-);
+interface HasEntityId {
+  id: EntityId
+}
 
 type SetDuration = Dispatch<SetStateAction<Duration | null>>;
 
@@ -23,4 +22,4 @@ type StateInSlice<S extends Slice> = S extends Slice<infer State> ? State : neve
 
 type StateWithSlice<S extends Slice> = {
   [K in NameInSlice<S>]: StateInSlice<S>
-};
+}

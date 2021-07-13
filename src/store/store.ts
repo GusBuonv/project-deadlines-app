@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { projectsReducer, projectsSliceName } from '../components/project/projectsSlice';
+import { projectListDisplaysReducer, projectListDisplaysSliceName } from '../components/projectList/projectListDisplaySlice';
 import { projectListsReducer, projectListsSliceName } from '../components/projectList/projectListsSlice';
 
 /**
@@ -24,6 +25,7 @@ const createStore = (preloadedState = initialState) => (
     reducer: {
       [projectsSliceName]: projectsReducer,
       [projectListsSliceName]: projectListsReducer,
+      [projectListDisplaysSliceName]: projectListDisplaysReducer,
     },
     preloadedState,
   })

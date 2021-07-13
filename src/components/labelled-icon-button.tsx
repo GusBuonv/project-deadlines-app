@@ -61,8 +61,10 @@ const LabelledIconButtonRaw = ({
   iconFocusColor,
   onMouseUp,
   onClick,
+  ...rest
 }: WithClassName<LabelledAddButtonProps>): JSX.Element => (
-  <WrapperSpan className={className}>
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  <WrapperSpan className={className} {...rest}>
     <IconButton
       size={size}
       icon={icon}

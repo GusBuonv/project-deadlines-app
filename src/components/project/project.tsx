@@ -130,6 +130,7 @@ export interface ProjectProps {
 const ProjectRaw = ({
   className,
   id,
+  ...rest
 }: WithClassName<ProjectProps>): JSX.Element => {
   const project = useProject(id);
   const dispatch = useAppDispatch();
@@ -146,17 +147,23 @@ const ProjectRaw = ({
     deadline,
     title,
     displayColor,
+    projectListId,
   } = project;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const toggleEditMode = () => {};
 
-  const deleteProject = () => dispatch(removeProjectInList(project));
+  const deleteProject = () => dispatch(removeProjectInList({
+    projectId: id,
+    projectListId,
+  }));
 
   return (
     <WrapperDiv
       $borderColor={displayColor}
       className={className}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...rest}
     >
       <VisualizationDiv>
         <InfoDiv>

@@ -1,22 +1,48 @@
 import Head from 'next/head';
 import styled from 'styled-components';
+import { Flipped, Flipper } from 'react-flip-toolkit';
 import { GetStaticProps } from 'next';
-import { nanoid } from '@reduxjs/toolkit';
-import DefaultLayout from '../layouts/default-layout';
+import { EntityState, nanoid } from '@reduxjs/toolkit';
 import * as homeContent from '../assets/home-content.json';
 import useAppSelector from '../hooks/useAppSelector';
 import useAppDispatch from '../hooks/useAppDispatch';
-import { addProjectList, selectProjectListIds } from '../components/projectList/projectListsSlice';
+import { selectProjectListIds } from '../components/projectList/projectListsSlice';
 import ProjectList from '../components/projectList/projectList';
 import LabelledIconButton from '../components/labelled-icon-button';
 import ControlsSpan from '../components/controls-span';
 import { WithClassName } from '../util/types';
-import { VerticalListMarginCSS } from '../styles';
 import destroyAllProjectLists from '../store/actions/destroyAllProjectLists';
+import { CenteredFlexColumnCSS, SetPaddingX, VerticalListMarginCSS } from '../styles';
+import { selectProjectIds } from '../components/project/projectsSlice';
+import createProjectList from '../store/actions/createProjectList';
+import { ProjectListEntity } from '../components/projectList/types';
+import { fadeIn, fadeOutInstantly } from '../styles/animations';
+import DefaultMain from '../layouts/partials/default-main';
+import DefaultFooter from '../layouts/partials/default-footer';
 
 //
 // Styles
 //
+
+const StyledFlipper = styled(Flipper)`
+  min-height: 100vh;
+  ${CenteredFlexColumnCSS}
+
+  &>${DefaultMain} {
+    flex-grow: 1;
+    ${SetPaddingX('0.5rem')}
+  }
+
+  body {
+    overflow: scroll;
+  }
+`;
+
+const StyledDefaultFooter = styled(DefaultFooter)`
+  ${StyledFlipper}>& {
+    ${SetPaddingX('0.5rem')}
+  }
+`;
 
 const H1 = styled.h1`
   margin-bottom: 5rem;
@@ -29,6 +55,12 @@ const H1 = styled.h1`
 
 const StyledProjectList = styled(ProjectList)`
   ${VerticalListMarginCSS}
+`;
+
+const StyledMain = styled(DefaultMain)<{ $tall: boolean }>`
+  ${CenteredFlexColumnCSS}
+  justify-content: ${({ $tall }) => ($tall ? 'space-between' : 'center')};
+  flex-grow: ${({ $tall }) => ($tall ? '1' : '0')};
 `;
 
 //
@@ -47,20 +79,61 @@ const HomeRaw = ({
   favicon,
   className,
 }: WithClassName<HomeProps>): JSX.Element => {
-  const projectLists = useAppSelector(selectProjectListIds);
+  const projectListIds = useAppSelector(selectProjectListIds);
+  const projectIds = useAppSelector(selectProjectIds);
+  const projectLists = useAppSelector((state) => state.projectLists);
   const dispatch = useAppDispatch();
 
-  const createProjectList = () => dispatch(addProjectList({
-    id: nanoid(),
-    title: 'New List',
-    displayColor: '#000',
-    projectIds: [],
+  const flipKey = projectListIds.join() + projectIds.join();
+
+  const spring = {
+    stiffness: 230,
+    damping: 30,
+    overshootClamping: false,
+  };
+
+  const createNewList = () => dispatch(createProjectList({
+    projectListId: nanoid(),
+    projectListDisplayId: nanoid(),
   }));
 
   const deleteAllLists = () => dispatch(destroyAllProjectLists());
 
+  const shouldFlipButton = (
+    prev: EntityState<ProjectListEntity>,
+    current: EntityState<ProjectListEntity>,
+  ) => {
+    const prevLength = prev?.ids.length ?? [];
+    const currentLength = current?.ids.length ?? [];
+    return (
+      (prevLength === 0 || currentLength === 0)
+      && prevLength !== currentLength
+    );
+  };
+
+  const shouldFlipControls = (
+    prev: EntityState<ProjectListEntity>,
+    current: EntityState<ProjectListEntity>,
+  ) => (!shouldFlipButton(prev, current));
+
   return (
-    <DefaultLayout className={className}>
+    <StyledFlipper
+      className={className}
+      flipKey={flipKey}
+      spring={spring}
+      decisionData={projectLists}
+      handleEnterUpdateDelete={({
+        hideEnteringElements,
+        animateEnteringElements,
+        animateExitingElements,
+        animateFlippedElements,
+      }) => {
+        hideEnteringElements();
+        animateEnteringElements();
+        animateExitingElements()
+          .then(animateFlippedElements);
+      }}
+    >
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
@@ -68,33 +141,59 @@ const HomeRaw = ({
         <link rel="icon" href={favicon} />
       </Head>
 
-      <H1>{title}</H1>
-      {projectLists.map((id) => (
-        <StyledProjectList
-          key={id}
-          id={id}
-        />
-      ))}
-      <ControlsSpan>
-        <LabelledIconButton
-          icon="plus-circle-outline"
-          size="medium"
-          label="Add List"
-          iconFocusColor="#00E676"
-          onMouseUp={({ currentTarget }) => currentTarget.blur()}
-          onClick={createProjectList}
-        />
-        {projectLists.length > 0 ? (
-          <LabelledIconButton
-            icon="trash-circle-outline"
-            size="medium"
-            label="Delete All Lists"
-            iconFocusColor="#F44336"
-            onClick={deleteAllLists}
-          />
-        ) : undefined}
-      </ControlsSpan>
-    </DefaultLayout>
+      <StyledMain $tall={projectListIds.length !== 0}>
+        <Flipped flipId="heading" translate>
+          <H1>{title}</H1>
+        </Flipped>
+        {projectListIds.map((id) => (
+          <Flipped
+            key={id}
+            flipId={id}
+            onAppear={fadeIn}
+            onExit={fadeOutInstantly}
+            translate
+          >
+            <StyledProjectList
+              key={id}
+              id={id}
+            />
+          </Flipped>
+        ))}
+        <Flipped flipId="control-span" translate shouldFlip={shouldFlipControls}>
+          <ControlsSpan>
+            <Flipped flipId="add-list-button" translate shouldFlip={shouldFlipButton}>
+              <LabelledIconButton
+                icon="plus-circle-outline"
+                size="medium"
+                label="Add List"
+                iconFocusColor="#00E676"
+                onMouseUp={({ currentTarget }) => currentTarget.blur()}
+                onClick={createNewList}
+              />
+            </Flipped>
+            {projectListIds.length > 0 ? (
+              <Flipped
+                flipId="delete-all-lists-button"
+                shouldFlip={shouldFlipButton}
+                onAppear={fadeIn}
+                onExit={fadeOutInstantly}
+              >
+                <LabelledIconButton
+                  icon="trash-circle-outline"
+                  size="medium"
+                  label="Delete All Lists"
+                  iconFocusColor="#F44336"
+                  onClick={deleteAllLists}
+                />
+              </Flipped>
+            ) : undefined}
+          </ControlsSpan>
+        </Flipped>
+      </StyledMain>
+      <Flipped flipId="footer" translate>
+        <StyledDefaultFooter />
+      </Flipped>
+    </StyledFlipper>
   );
 };
 

@@ -1,5 +1,7 @@
-import { EntityId, nanoid } from '@reduxjs/toolkit';
+import { EntityId, EntityState, nanoid } from '@reduxjs/toolkit';
 import styled, { css } from 'styled-components';
+import { Flipped } from 'react-flip-toolkit';
+import { useEffect } from 'react';
 import useAppDispatch from '../../hooks/useAppDispatch';
 import { CenteredFlexColumnCSS, VerticalListMarginCSS } from '../../styles';
 import { WithClassName } from '../../util/types';
@@ -10,18 +12,29 @@ import ControlsSpan from '../controls-span';
 import createProjectInList from '../../store/actions/createProjectInList';
 import removeAllProjectsInList from '../../store/actions/removeAllProjectsInList';
 import destroyProjectList from '../../store/actions/destroyProjectList';
+import useProjectListDisplay from './useProjectListDisplay';
+import { ProjectListEntity } from './types';
+import { fadeIn, fadeOutInstantly } from '../../styles/animations';
 
 //
 // Styles
 //
 
-const WrapperDiv = styled.div`
+const WrapperCSS = css`
   width: 100%;
 
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 `;
+
+const WrapperDiv = styled.div`
+  ${WrapperCSS}
+`;
+
+// const WrapperFlipper = styled(Flipper)`
+//   ${WrapperCSS}
+// `;
 
 const ListHeaderCSS = css`
   margin-bottom: 0.5rem;
@@ -48,14 +61,20 @@ const ErrorDiv = styled.div`
   color: ${({ theme }) => theme.colors.alert};
 `;
 
-const ListWrapperDiv = styled.div<{ $borderColor?: string }>`
-  width: 100%;
-
-  border-top: 2px;
-  border-left: 2px;
+const ListWrapperBorderCSS = css<{ $borderColor?: string }>`
+  --border-width: 2px;
   border-style: solid;
   border-top-left-radius: 0.5rem;
   border-color: ${({ $borderColor }) => $borderColor ?? '#000'};
+
+`;
+
+const ListWrapperDiv = styled.div<{ $borderColor?: string }>`
+  position: relative;
+  width: 100%;
+
+  ${ListWrapperBorderCSS}
+  border-top-width: var(--border-width);
 
   --padding: 0.5rem;
   padding-left: var(--padding);
@@ -69,6 +88,17 @@ const ListWrapperDiv = styled.div<{ $borderColor?: string }>`
   }
 `;
 
+const ListWrapperLeftBorderDiv = styled.div<{ $borderColor?: string }>`
+  ${ListWrapperBorderCSS}
+  border-left-width: var(--border-width);
+
+  position: absolute;
+  height: 100%;
+  width: 1rem;
+  left: 0;
+  top: 0;
+`;
+
 const StyledProject = styled(Project)`
   ${VerticalListMarginCSS}
 
@@ -80,16 +110,26 @@ const StyledProject = styled(Project)`
 //
 interface ProjectListProps {
   id: EntityId,
+  onListChange?: () => void,
 }
 
 const ProjectListRaw = ({
   className,
-  id,
+  onListChange,
+  id: projectListId,
+  ...rest
 }: WithClassName<ProjectListProps>): JSX.Element => {
-  const projectList = useProjectList(id);
+  const projectList = useProjectList(projectListId);
   const dispatch = useAppDispatch();
+  useEffect(() => {
+    if (onListChange) {
+      onListChange();
+    }
+  }, [projectList, onListChange]);
 
-  if (!projectList) {
+  const projectListDisplay = useProjectListDisplay(projectList ? projectList.projectListDisplayId : '');
+
+  if (!projectList || !projectListDisplay) {
     return (
       <WrapperDiv className={className}>
         <ErrorDiv>Project List Not Found!</ErrorDiv>
@@ -98,52 +138,120 @@ const ProjectListRaw = ({
   }
 
   const {
+    projectIds,
+    projectListDisplayId,
+  } = projectList;
+
+  const {
     title,
     displayColor,
-    projectIds,
-  } = projectList;
+  } = projectListDisplay;
 
   const createProject = () => dispatch(createProjectInList({
     projectId: nanoid(),
-    projectListId: id,
+    projectListId,
   }));
-  const clearList = () => dispatch(removeAllProjectsInList(projectList));
-  const deleteList = () => dispatch(destroyProjectList(projectList));
+
+  const clearList = () => dispatch(removeAllProjectsInList({
+    projectIds,
+    projectListId,
+  }));
+
+  const deleteList = () => dispatch(destroyProjectList({
+    projectIds,
+    projectListDisplayId,
+    projectListId,
+  }));
+
+  const shouldFlip = (
+    prev: EntityState<ProjectListEntity>,
+    current: EntityState<ProjectListEntity>,
+  ) => {
+    const prevKey = prev?.entities[projectListId]?.projectIds.join() ?? [];
+    const currentKey = current?.entities[projectListId]?.projectIds.join() ?? [];
+    return prevKey !== currentKey;
+  };
+
+  const shouldFlipButtons = (
+    prev: EntityState<ProjectListEntity>,
+    current: EntityState<ProjectListEntity>,
+  ) => {
+    if (shouldFlip(prev, current)) return true;
+
+    const prevLength = prev?.entities[projectListId]?.projectIds.length ?? [];
+    const currentLength = current?.entities[projectListId]?.projectIds.length ?? [];
+    return (
+      (prevLength === 0 || currentLength === 0)
+      && prevLength !== currentLength
+    );
+  };
+
+  const shouldFlipControls = (
+    prev: EntityState<ProjectListEntity>,
+    current: EntityState<ProjectListEntity>,
+  ) => (shouldFlip(prev, current) && !shouldFlipButtons(prev, current));
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
-    <WrapperDiv className={className}>
-      <H2 $color={displayColor}>
-        {title}
-      </H2>
+    <WrapperDiv className={className} {...rest}>
+      <H2 $color={displayColor}>{title}</H2>
       <ListWrapperDiv $borderColor={displayColor}>
-        {projectIds.map((projectId) => <StyledProject key={projectId} id={projectId} />)}
-        <ControlsSpan>
-          <LabelledIconButton
-            icon="plus-circle-outline"
-            size="small"
-            label="Add Project"
-            iconFocusColor="#00E676"
-            onMouseUp={({ currentTarget }) => currentTarget.blur()}
-            onClick={createProject}
-          />
-          {projectList.projectIds.length > 0 ? (
-            <LabelledIconButton
-              icon="close-circle-outline"
-              size="small"
-              label="Clear List"
-              iconFocusColor="#FFA000"
-              onClick={clearList}
-            />
-          ) : undefined}
-          <LabelledIconButton
-            icon="trash-circle-outline"
-            size="small"
-            label="Delete List"
-            iconFocusColor="#F44336"
-            onClick={deleteList}
-          />
-        </ControlsSpan>
+        <Flipped flipId={`${projectListId.toString()}-list`} scale shouldFlip={shouldFlip}>
+          <ListWrapperLeftBorderDiv $borderColor={displayColor} />
+        </Flipped>
+        {projectIds.map((projectId) => (
+          <Flipped
+            key={projectId}
+            flipId={projectId.toString()}
+            onAppear={fadeIn}
+            onExit={fadeOutInstantly}
+            translate
+            shouldFlip={shouldFlip}
+          >
+            <StyledProject id={projectId} />
+          </Flipped>
+        ))}
+        <Flipped flipId={`${projectListId.toString()}-controls`} translate shouldFlip={shouldFlipControls}>
+          <ControlsSpan>
+            <Flipped flipId={`${projectListId.toString()}-add-project-button`} translate shouldFlip={shouldFlipButtons}>
+              <LabelledIconButton
+                icon="plus-circle-outline"
+                size="small"
+                label="Add Project"
+                iconFocusColor="#00E676"
+                onMouseUp={({ currentTarget }) => currentTarget.blur()}
+                onClick={createProject}
+              />
+            </Flipped>
+            {projectList.projectIds.length > 0 ? (
+              <Flipped
+                flipId={`${projectListId.toString()}-clear-list-button`}
+                translate
+                shouldFlip={shouldFlipButtons}
+                onAppear={fadeIn}
+                onExit={fadeOutInstantly}
+              >
+                <LabelledIconButton
+                  icon="close-circle-outline"
+                  size="small"
+                  label="Clear List"
+                  iconFocusColor="#FFA000"
+                  onClick={clearList}
+                />
+              </Flipped>
+            ) : undefined}
+            <Flipped flipId={`${projectListId.toString()}-delete-list-button`} translate shouldFlip={shouldFlipButtons}>
+              <LabelledIconButton
+                icon="trash-circle-outline"
+                size="small"
+                label="Delete List"
+                iconFocusColor="#F44336"
+                onClick={deleteList}
+              />
+            </Flipped>
+          </ControlsSpan>
+        </Flipped>
+
       </ListWrapperDiv>
     </WrapperDiv>
   );

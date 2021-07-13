@@ -1,4 +1,5 @@
 import '../styles/preflight.css'; // CSS reset from Tailwind CSS
+import '../styles/forceScrollbar.css';
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'styled-components';
 import { Provider } from 'react-redux';

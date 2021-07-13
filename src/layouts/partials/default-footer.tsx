@@ -42,8 +42,10 @@ export interface DefaultFooterProps {
 
 const DefaultFooterRaw = ({
   className,
+  ...rest
 }: WithClassName<DefaultFooterProps>): JSX.Element => (
-  <Footer className={className}>
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  <Footer className={className} {...rest}>
     <Span>Made for</Span>
     <Span>
       <img src="/koala-logo.png" alt="Koala Logo" width="108" height="24" />

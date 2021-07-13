@@ -1,9 +1,11 @@
-import { createAction } from '@reduxjs/toolkit';
-import { ProjectListEntity } from '../../components/projectList/types';
+import { createAction, EntityId } from '@reduxjs/toolkit';
 
 export const DestroyProjectListActionType = 'deadlines/destroyProjectList';
 
-export interface DestroyProjectListPayload extends ProjectListEntity {
+export interface DestroyProjectListPayload {
+  projectListId: EntityId,
+  projectIds: EntityId[],
+  projectListDisplayId: EntityId,
 }
 
 const destroyProjectList = createAction<DestroyProjectListPayload>(

@@ -1,5 +1,5 @@
 import { EntityId } from '@reduxjs/toolkit';
-import { WithId } from '../../util/types';
+import { HasEntityId } from '../../util/types';
 
 export interface ProjectOptions {
   title: string;
@@ -8,6 +8,6 @@ export interface ProjectOptions {
   displayColor?: string;
 }
 
-export interface ProjectEntity extends WithId<ProjectOptions> {
+export interface ProjectEntity extends HasEntityId, ProjectOptions {
   projectListId: EntityId;
 }

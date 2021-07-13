@@ -15,21 +15,16 @@ const initialState = projectsAdapter.getInitialState();
 const projectsSlice = createSlice({
   name: 'projects',
   initialState,
-  reducers: {
-    addProject: projectsAdapter.addOne,
-    removeProject: projectsAdapter.removeOne,
-    updateProject: projectsAdapter.updateOne,
-    removeManyProjects: projectsAdapter.removeMany,
-    removeAllProjects: projectsAdapter.removeAll,
-  },
+  reducers: {},
   extraReducers: {
-    [CreateProjectInListActionType]: (state, action: PayloadAction<CreateProjectInListPayload>) => {
-      const {
+    [CreateProjectInListActionType]: (
+      state,
+      { payload: {
         projectId,
         projectListId,
         options,
-      } = action.payload;
-
+      } }: PayloadAction<CreateProjectInListPayload>,
+    ) => {
       projectsAdapter.addOne(state, {
         title: 'New Project',
         // one month ~= 2592000000ms = 30 * 24 * 60 * 60 * 1000
@@ -42,33 +37,25 @@ const projectsSlice = createSlice({
     },
     [RemoveAllProjectsInListActionType]: (
       state,
-      action: PayloadAction<RemoveAllProjectsInListPayload>,
+      { payload: { projectIds } }: PayloadAction<RemoveAllProjectsInListPayload>,
     ) => {
-      projectsAdapter.removeMany(state, action.payload.projectIds);
+      projectsAdapter.removeMany(state, projectIds);
     },
     [RemoveProjectInListActionType]: (
       state,
-      { payload }: PayloadAction<RemoveProjectInListPayload>,
+      { payload: { projectId } }: PayloadAction<RemoveProjectInListPayload>,
     ) => {
-      projectsAdapter.removeOne(state, payload.id);
+      projectsAdapter.removeOne(state, projectId);
     },
     [DestroyProjectListActionType]: (
       state,
-      { payload }: PayloadAction<DestroyProjectListPayload>,
+      { payload: { projectIds } }: PayloadAction<DestroyProjectListPayload>,
     ) => {
-      projectsAdapter.removeMany(state, payload.projectIds);
+      projectsAdapter.removeMany(state, projectIds);
     },
     [DestroyAllProjectListsActionType]: projectsAdapter.removeAll,
   },
 });
-
-export const {
-  updateProject,
-  removeProject,
-  removeManyProjects,
-  removeAllProjects,
-  addProject,
-} = projectsSlice.actions;
 
 export const projectsReducer = projectsSlice.reducer;
 

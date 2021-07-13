@@ -1,9 +1,10 @@
-import { createAction } from '@reduxjs/toolkit';
-import { ProjectListEntity } from '../../components/projectList/types';
+import { createAction, EntityId } from '@reduxjs/toolkit';
 
 export const RemoveAllProjectsInListActionType = 'deadlines/removeAllProjectsInList';
 
-export interface RemoveAllProjectsInListPayload extends ProjectListEntity {
+export interface RemoveAllProjectsInListPayload {
+  projectIds: EntityId[],
+  projectListId: EntityId,
 }
 
 const removeAllProjectsInList = createAction<RemoveAllProjectsInListPayload>(
