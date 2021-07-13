@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { EntityId } from '@reduxjs/toolkit';
-import { CenteredFlexCSS, VerticalListMarginCSS } from '../../styles';
+import { CenteredFlexCSS } from '../../styles';
 import { WithClassName } from '../../util/types';
 import Countdown from '../countdown';
 import DateTime from '../date-time';
@@ -16,8 +16,6 @@ import { removeProjectFromList } from '../projectList/projectListsSlice';
 
 const WrapperDiv = styled.div<{ $borderColor?: string }>`
   width: 100%;
-
-  ${VerticalListMarginCSS}
 
   border-radius: 0.5rem;
   border-style: solid;

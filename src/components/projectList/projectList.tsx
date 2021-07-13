@@ -17,8 +17,6 @@ import ControlsSpan from '../controls-span';
 const WrapperDiv = styled.div`
   width: 100%;
 
-  ${VerticalListMarginCSS}
-
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -71,6 +69,8 @@ const ListWrapperDiv = styled.div<{ $borderColor?: string }>`
 `;
 
 const StyledProject = styled(Project)`
+  ${VerticalListMarginCSS}
+
   box-shadow: 0 2px 5px #979696;
 `;
 
@@ -78,7 +78,7 @@ const StyledProject = styled(Project)`
 // Component
 //
 interface ProjectListProps {
-  id: EntityId
+  id: EntityId,
 }
 
 const ProjectListRaw = ({
@@ -131,6 +131,7 @@ const ProjectListRaw = ({
   };
 
   return (
+    // eslint-disable-next-line react/jsx-props-no-spreading
     <WrapperDiv className={className}>
       <H2 $color={displayColor}>
         {title}

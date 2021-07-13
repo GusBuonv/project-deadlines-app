@@ -12,6 +12,7 @@ import ProjectList from '../components/projectList/projectList';
 import LabelledIconButton from '../components/labelled-icon-button';
 import ControlsSpan from '../components/controls-span';
 import { WithClassName } from '../util/types';
+import { VerticalListMarginCSS } from '../styles';
 
 //
 // Styles
@@ -24,6 +25,10 @@ const H1 = styled.h1`
   line-height: 1.15;
   font-size: 4rem;
   font-weight: 700;
+`;
+
+const StyledProjectList = styled(ProjectList)`
+  ${VerticalListMarginCSS}
 `;
 
 //
@@ -70,7 +75,7 @@ const HomeRaw = ({
 
       <H1>{title}</H1>
       {projectLists.map((id) => (
-        <ProjectList
+        <StyledProjectList
           key={id}
           id={id}
         />
