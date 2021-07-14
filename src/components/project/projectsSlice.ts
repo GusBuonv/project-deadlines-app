@@ -15,7 +15,9 @@ const initialState = projectsAdapter.getInitialState();
 const projectsSlice = createSlice({
   name: 'projects',
   initialState,
-  reducers: {},
+  reducers: {
+    updateProject: projectsAdapter.updateOne,
+  },
   extraReducers: {
     [CreateProjectInListActionType]: (
       state,
@@ -60,6 +62,10 @@ const projectsSlice = createSlice({
 export const projectsReducer = projectsSlice.reducer;
 
 export const projectsSliceName = projectsSlice.name;
+
+export const {
+  updateProject,
+} = projectsSlice.actions;
 
 export const {
   selectById: selectProjectById,

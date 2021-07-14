@@ -19,6 +19,7 @@ import { ProjectListEntity } from '../components/projectList/types';
 import { fadeIn, fadeOutInstantly } from '../styles/animations';
 import DefaultMain from '../layouts/partials/default-main';
 import DefaultFooter from '../layouts/partials/default-footer';
+import blurOnMouseUp from '../util/blurOnMouseUp';
 
 //
 // Styles
@@ -167,7 +168,7 @@ const HomeRaw = ({
                 size="medium"
                 label="Add List"
                 iconFocusColor="#00E676"
-                onMouseUp={({ currentTarget }) => currentTarget.blur()}
+                onMouseUp={blurOnMouseUp}
                 onClick={createNewList}
               />
             </Flipped>

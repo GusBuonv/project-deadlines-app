@@ -1,7 +1,7 @@
 import { EntityId, EntityState, nanoid } from '@reduxjs/toolkit';
 import styled, { css } from 'styled-components';
 import { Flipped } from 'react-flip-toolkit';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useAppDispatch from '../../hooks/useAppDispatch';
 import { CenteredFlexColumnCSS, VerticalListMarginCSS } from '../../styles';
 import { WithClassName } from '../../util/types';
@@ -13,8 +13,15 @@ import createProjectInList from '../../store/actions/createProjectInList';
 import removeAllProjectsInList from '../../store/actions/removeAllProjectsInList';
 import destroyProjectList from '../../store/actions/destroyProjectList';
 import useProjectListDisplay from './useProjectListDisplay';
-import { ProjectListEntity } from './types';
+import { ProjectListEntity, ProjectListDisplayOptions } from './types';
 import { fadeIn, fadeOutInstantly } from '../../styles/animations';
+import blurOnMouseUp from '../../util/blurOnMouseUp';
+import IconButton from '../icon-button';
+import useToggleEditMode from '../../hooks/useToggleEditMode';
+
+import getDifference from '../../util/getDifference';
+import { updateProjectListDisplay } from './projectListDisplaySlice';
+import useHandleTitleChange from '../project/useHandleTitleChange';
 
 //
 // Styles
@@ -37,7 +44,6 @@ const WrapperDiv = styled.div`
 // `;
 
 const ListHeaderCSS = css`
-  margin-bottom: 0.5rem;
   margin-left: 1rem;
 
   font-size: 2.5rem;
@@ -53,6 +59,17 @@ const H2 = styled.h2<{ $color?: string }>`
   ${ListHeaderCSS}
 
   color: ${({ $color }) => $color ?? '#000'};
+`;
+
+const HeaderInput = styled.input`
+  ${ListHeaderCSS}
+`;
+
+const TopBarDiv = styled.div`
+  padding-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const ErrorDiv = styled.div`
@@ -121,13 +138,18 @@ const ProjectListRaw = ({
 }: WithClassName<ProjectListProps>): JSX.Element => {
   const projectList = useProjectList(projectListId);
   const dispatch = useAppDispatch();
+  const [mode, setMode] = useState<'edit' | 'display'>('display');
   useEffect(() => {
     if (onListChange) {
       onListChange();
     }
   }, [projectList, onListChange]);
-
+  const toggleEditMode = useToggleEditMode(setMode);
   const projectListDisplay = useProjectListDisplay(projectList ? projectList.projectListDisplayId : '');
+  const [draft, setDraft] = useState<ProjectListDisplayOptions>({
+    title: projectListDisplay?.title ?? '',
+  });
+  const handleTitleChange = useHandleTitleChange(setDraft);
 
   if (!projectList || !projectListDisplay) {
     return (
@@ -191,10 +213,50 @@ const ProjectListRaw = ({
     current: EntityState<ProjectListEntity>,
   ) => (shouldFlip(prev, current) && !shouldFlipButtons(prev, current));
 
+  const modeParams = {
+    display: {
+      header: (<H2 $color={displayColor}>{title}</H2>),
+      label: 'Edit Project List',
+      icon: 'pencil' as const,
+      action: toggleEditMode,
+    },
+    edit: {
+      header: (
+        <HeaderInput
+          id={`${projectListId}-title`}
+          value={draft.title ?? title}
+          type="text"
+          onChange={handleTitleChange}
+        />
+      ),
+      label: 'Save Changes',
+      icon: 'save' as const,
+      action() {
+        const changes = getDifference({
+          ...draft,
+        }, projectListDisplay);
+        if (Object.keys(changes).length) {
+          dispatch(updateProjectListDisplay({ id: projectListDisplayId, changes }));
+        }
+        toggleEditMode();
+      },
+    },
+  };
+
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <WrapperDiv className={className} {...rest}>
-      <H2 $color={displayColor}>{title}</H2>
+      <TopBarDiv>
+        {modeParams[mode].header}
+        <IconButton
+          icon={modeParams[mode].icon}
+          size="medium"
+          label={modeParams[mode].label}
+          iconFocusColor="#0f0"
+          onMouseUp={blurOnMouseUp}
+          onClick={modeParams[mode].action}
+        />
+      </TopBarDiv>
       <ListWrapperDiv $borderColor={displayColor}>
         <Flipped flipId={`${projectListId.toString()}-list`} scale shouldFlip={shouldFlip}>
           <ListWrapperLeftBorderDiv $borderColor={displayColor} />
@@ -219,7 +281,7 @@ const ProjectListRaw = ({
                 size="small"
                 label="Add Project"
                 iconFocusColor="#00E676"
-                onMouseUp={({ currentTarget }) => currentTarget.blur()}
+                onMouseUp={blurOnMouseUp}
                 onClick={createProject}
               />
             </Flipped>

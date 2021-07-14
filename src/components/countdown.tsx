@@ -14,20 +14,11 @@ const StyledDuration = styled(Duration)<{
   color: ${({ $color }) => $color};
 `;
 
-const PassedEndDiv = styled.div`
-  text-align: center;
-
-  @media (min-width: 481px) {
-    text-align: right;
-  }
-`;
-
 //
 // Component
 //
 
 interface CountdownProps {
-  passedEndMessage: string,
   end: string,
   /** Default: `true`; Enable wrapping between `"#D"` and `"#h"` */
   wraps?: boolean,
@@ -38,21 +29,13 @@ interface CountdownProps {
  *
  * The time duration is formatted as `"#Y #M #D #h #m #s"`. The seconds field
  * always displays, even when the duration is zero.
- *
- * If the duration exceeds one day, the element may wrap between `"#D"` and
- * `"#h"`. Disable this behavior by setting the `wraps` prop to `false`.
  */
 const CountdownRaw = ({
-  passedEndMessage,
   className,
   end,
   wraps,
 }: WithClassName<CountdownProps>): JSX.Element => {
   const duration = useTimeUntil(end);
-
-  if (!duration) {
-    return <PassedEndDiv className={className}>{passedEndMessage}</PassedEndDiv>;
-  }
 
   let statusColor: string;
   if (
@@ -70,7 +53,7 @@ const CountdownRaw = ({
     <StyledDuration
       className={className}
       $color={statusColor}
-      duration={duration}
+      duration={duration ?? { seconds: 0 }}
       wraps={wraps}
     />
   );

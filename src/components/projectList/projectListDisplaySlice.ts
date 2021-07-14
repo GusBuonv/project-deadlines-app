@@ -12,7 +12,9 @@ const initialState = projectListDisplaysAdapter.getInitialState();
 const projectListDisplaysSlice = createSlice({
   name: 'projectListDisplays',
   initialState,
-  reducers: {},
+  reducers: {
+    updateProjectListDisplay: projectListDisplaysAdapter.updateOne,
+  },
   extraReducers: {
     [CreateProjectListActionType]: (
       state,
@@ -44,6 +46,10 @@ const projectListDisplaysSlice = createSlice({
 export const projectListDisplaysReducer = projectListDisplaysSlice.reducer;
 
 export const projectListDisplaysSliceName = projectListDisplaysSlice.name;
+
+export const {
+  updateProjectListDisplay,
+} = projectListDisplaysSlice.actions;
 
 export const {
   selectById: selectProjectListDisplayById,
