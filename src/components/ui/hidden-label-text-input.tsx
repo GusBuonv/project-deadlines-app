@@ -1,7 +1,7 @@
 import { ChangeEventHandler } from 'react';
 import styled from 'styled-components';
-import { HasClassName } from '../util/types';
-import SrOnlyLabel from './project/SrOnlyLabel';
+import { HasClassName } from '../../util/types';
+import SrOnlyLabel from './sr-only-label';
 
 interface HiddenLabelTextInputProps {
   value: string,

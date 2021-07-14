@@ -1,9 +1,9 @@
 import { formatISODuration } from 'date-fns';
 import { memo } from 'react';
 import styled from 'styled-components';
-import { CenteredFlexCSS, SetMarginX } from '../styles';
-import formatDurationTerse from '../util/formatDurationTerse';
-import { WithClassName } from '../util/types';
+import { CenteredFlexCSS, SetMarginX } from '../../styles';
+import formatDurationTerse from '../../util/formatDurationTerse';
+import { WithClassName } from '../../util/types';
 
 //
 // Styles

@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import { CenteredFlexCSS, SetPaddingY } from '../../styles';
-import { WithClassName } from '../../util/types';
+import { CenteredFlexCSS, SetPaddingY } from '../styles';
+import { WithClassName } from '../util/types';
 
 //
 // Styles

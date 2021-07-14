@@ -1,9 +1,9 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import { CenteredFlexCSS } from '../styles';
-import { WithClassName } from '../util/types';
 import IconButton, { IconButtonProps } from './icon-button';
 import { IconSize } from './icon';
+import { CenteredFlexCSS } from '../../styles';
+import { WithClassName } from '../../util/types';
 
 //
 // Style

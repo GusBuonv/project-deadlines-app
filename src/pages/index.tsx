@@ -9,8 +9,7 @@ import useAppSelector from '../hooks/useAppSelector';
 import useAppDispatch from '../hooks/useAppDispatch';
 import { selectProjectListIds } from '../components/projectList/projectListsSlice';
 import ProjectList from '../components/projectList/projectList';
-import LabelledIconButton from '../components/labelled-icon-button';
-import ControlsSpan from '../components/controls-span';
+import ControlsSpan from '../components/ui/controls-span';
 import { WithClassName } from '../util/types';
 import destroyAllProjectLists from '../store/deadlines/actions/destroyAllProjectLists';
 import { CenteredFlexColumnCSS, CenteredFlexCSS, SetMarginX, SetPaddingX, VerticalListMarginCSS } from '../styles';
@@ -22,10 +21,11 @@ import DefaultMain from '../partials/default-main';
 import DefaultFooter from '../partials/default-footer';
 import blurOnMouseUp from '../util/blurOnMouseUp';
 import selectPageTitle from '../store/globals/selectors/selectPageTitle';
-import IconButton from '../components/icon-button';
 import useEditMode from '../hooks/useEditMode';
 import updatePageTitle from '../store/globals/actions/updatePageTitle';
-import HiddenLabelTextInput from '../components/HiddenLabelTextInput';
+import HiddenLabelTextInput from '../components/ui/hidden-label-text-input';
+import IconButton from '../components/ui/icon-button';
+import LabelledIconButton from '../components/ui/labelled-icon-button';
 
 //
 // Styles

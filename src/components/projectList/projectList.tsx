@@ -7,8 +7,7 @@ import { CenteredFlexColumnCSS, VerticalListMarginCSS } from '../../styles';
 import { WithClassName } from '../../util/types';
 import Project from '../project/project';
 import useProjectList from './useProjectList';
-import LabelledIconButton from '../labelled-icon-button';
-import ControlsSpan from '../controls-span';
+import ControlsSpan from '../ui/controls-span';
 import createProjectInList from '../../store/deadlines/actions/createProjectInList';
 import removeAllProjectsInList from '../../store/deadlines/actions/removeAllProjectsInList';
 import destroyProjectList from '../../store/deadlines/actions/destroyProjectList';
@@ -16,12 +15,13 @@ import useProjectListDisplay from './useProjectListDisplay';
 import { ProjectListEntity, ProjectListDisplayOptions } from './types';
 import { fadeIn, fadeOutInstantly } from '../../styles/animations';
 import blurOnMouseUp from '../../util/blurOnMouseUp';
-import IconButton from '../icon-button';
 import getDifference from '../../util/getDifference';
 import { updateProjectListDisplay } from './projectListDisplaySlice';
 import useHandleTitleChange from '../project/useHandleTitleChange';
 import useEditMode from '../../hooks/useEditMode';
-import HiddenLabelTextInput from '../HiddenLabelTextInput';
+import HiddenLabelTextInput from '../ui/hidden-label-text-input';
+import IconButton from '../ui/icon-button';
+import LabelledIconButton from '../ui/labelled-icon-button';
 
 //
 // Styles

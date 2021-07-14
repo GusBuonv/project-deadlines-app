@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { CenteredFlexCSS, SetMarginX } from '../styles';
+import { CenteredFlexCSS, SetMarginX } from '../../styles';
 import LabelledIconButton from './labelled-icon-button';
 
 const ControlsSpan = styled.span`

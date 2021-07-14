@@ -3,10 +3,7 @@ import { EntityId } from '@reduxjs/toolkit';
 import { useState } from 'react';
 import { CenteredFlexCSS } from '../../styles';
 import { WithClassName } from '../../util/types';
-import Countdown from '../countdown';
-import DateTime from '../date-time';
 import useProject from './useProject';
-import IconButton from '../icon-button';
 import useAppDispatch from '../../hooks/useAppDispatch';
 import removeProjectInList from '../../store/deadlines/actions/removeProjectInList';
 import { updateProject } from './projectsSlice';
@@ -15,8 +12,11 @@ import { ProjectOptions } from './types';
 import blurOnMouseUp from '../../util/blurOnMouseUp';
 import useHandleTitleChange from './useHandleTitleChange';
 import useEditMode from '../../hooks/useEditMode';
-import HiddenLabelTextInput from '../HiddenLabelTextInput';
 import useHandleDeadlineChange from '../../hooks/useHandleDeadlineChange';
+import Countdown from '../time/countdown';
+import DateTime from '../time/date-time';
+import HiddenLabelTextInput from '../ui/hidden-label-text-input';
+import IconButton from '../ui/icon-button';
 
 //
 // Styles

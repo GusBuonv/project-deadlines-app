@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { CenteredFlexColumnCSS, SetMarginX, SetPaddingY } from '../../styles';
+import { CenteredFlexColumnCSS, SetMarginX, SetPaddingY } from '../styles';
 
 const DefaultMain = styled.main`
   width: 100%;

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import { WithClassName } from '../util/types';
+import { WithClassName } from '../../util/types';
 
 //
 // Styles
