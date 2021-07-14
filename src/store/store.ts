@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { projectsReducer, projectsSliceName } from '../components/project/projectsSlice';
 import { projectListDisplaysReducer, projectListDisplaysSliceName } from '../components/projectList/projectListDisplaySlice';
 import { projectListsReducer, projectListsSliceName } from '../components/projectList/projectListsSlice';
+import globalsReducer, { globalsSliceName } from './globals/reducers/globalsReducer';
 
 /**
  * Enumerated state version storage keys
@@ -26,6 +27,7 @@ const createStore = (preloadedState = initialState) => (
       [projectsSliceName]: projectsReducer,
       [projectListsSliceName]: projectListsReducer,
       [projectListDisplaysSliceName]: projectListDisplaysReducer,
+      [globalsSliceName]: globalsReducer,
     },
     preloadedState,
   })

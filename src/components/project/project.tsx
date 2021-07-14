@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { EntityId } from '@reduxjs/toolkit';
-import { ChangeEventHandler, useCallback, useState } from 'react';
+import { useState } from 'react';
 import { CenteredFlexCSS } from '../../styles';
 import { WithClassName } from '../../util/types';
 import Countdown from '../countdown';
@@ -13,8 +13,10 @@ import { updateProject } from './projectsSlice';
 import getDifference from '../../util/getDifference';
 import { ProjectOptions } from './types';
 import blurOnMouseUp from '../../util/blurOnMouseUp';
-import useToggleEditMode from '../../hooks/useToggleEditMode';
 import useHandleTitleChange from './useHandleTitleChange';
+import useEditMode from '../../hooks/useEditMode';
+import HiddenLabelTextInput from '../HiddenLabelTextInput';
+import useHandleDeadlineChange from '../../hooks/useHandleDeadlineChange';
 
 //
 // Styles
@@ -102,25 +104,16 @@ const H2 = styled.h2<{ $color?: string }>`
   color: ${({ $color }) => $color ?? 'inherit'};
 `;
 
-const HeaderInput = styled.input`
-  position: relative;
-  max-width: 100%;
-  ${HeaderCSS}
-  margin-bottom: 0.25rem;
-  text-align: center;
+const HeaderInput = styled(HiddenLabelTextInput)`
+  input {
+    max-width: 100%;
+    ${HeaderCSS}
+    margin-bottom: 0.25rem;
+    text-align: center;
 
-  @media (min-width: 481px) {
-    text-align: left;
-  }
-
-  &::before:active {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    padding: 0.25rem;
-    border-width: 2px;
-    border-style: solid;
+    @media (min-width: 481px) {
+      text-align: left;
+    }
   }
 `;
 
@@ -128,12 +121,11 @@ const DueSpan = styled.span`
   text-decoration: underline;
 `;
 
-const DeadlineInput = styled.input<{ $invalid: boolean }>`
-  color: ${({ $invalid }) => ($invalid ? '#f00' : 'inherit')};
-`;
-
-const DeadlineInputWrapper = styled.div`
+const DeadlineInput = styled(HiddenLabelTextInput)<{ $invalid: boolean }>`
   display: inline-block;
+  input {
+    color: ${({ $invalid }) => ($invalid ? '#f00' : 'inherit')};
+  }
 `;
 
 const CountdownCSS = css`
@@ -168,18 +160,6 @@ const StyledIconButton = styled(IconButton)<{ $bgColor: string }>`
   }
 `;
 
-const SrOnlyLabel = styled.label`
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-`;
-
 //
 // Component
 //
@@ -198,24 +178,14 @@ const ProjectRaw = ({
 }: WithClassName<ProjectProps>): JSX.Element => {
   const project = useProject(id);
   const dispatch = useAppDispatch();
-  const [mode, setMode] = useState<'edit' | 'display'>('display');
+  const [mode, toggleEditMode] = useEditMode('display');
   const [draftDeadlineInvalid, setDraftDeadlineInvalid] = useState(false);
   const [draft, setDraft] = useState<ProjectOptions>({
     deadline: new Date(project?.deadline ?? 'Invalid Date').toLocaleString() ?? 'Invalid Date',
     title: project?.title ?? '',
   });
-
-  const toggleEditMode = useToggleEditMode(setMode);
-
-  const handleTitleChange: ChangeEventHandler<HTMLInputElement> = useHandleTitleChange(setDraft);
-
-  const handleDeadlineChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
-    setDraftDeadlineInvalid(false);
-    setDraft((state) => ({
-      ...state,
-      deadline: e.target.value,
-    }));
-  }, [setDraft, setDraftDeadlineInvalid]);
+  const handleDraftTitleChange = useHandleTitleChange(setDraft);
+  const handleDeadlineChange = useHandleDeadlineChange(setDraftDeadlineInvalid, setDraft);
 
   if (!project) {
     return (
@@ -239,34 +209,20 @@ const ProjectRaw = ({
     edit: {
       /** HEADER ELEMENT */
       header: (
-        <div>
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <SrOnlyLabel htmlFor={`${id}-title`}>
-            Project Title
-          </SrOnlyLabel>
-          <HeaderInput
-            id={`${id}-title`}
-            value={draft.title ?? title}
-            type="text"
-            onChange={handleTitleChange}
-          />
-        </div>
+        <HeaderInput
+          id={`${id}-title`}
+          value={draft.title ?? title}
+          onChange={handleDraftTitleChange}
+        />
       ),
       /** DEADLINE ELEMENT */
       deadline: (
-        <DeadlineInputWrapper>
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <SrOnlyLabel htmlFor={`${id}-deadline`}>
-            Project Deadline
-          </SrOnlyLabel>
-          <DeadlineInput
-            $invalid={draftDeadlineInvalid}
-            id={`${id}-deadline`}
-            value={draft.deadline ?? new Date(deadline).toLocaleString()}
-            type="text"
-            onChange={handleDeadlineChange}
-          />
-        </DeadlineInputWrapper>
+        <DeadlineInput
+          $invalid={draftDeadlineInvalid}
+          id={`${id}-deadline`}
+          value={draft.deadline ?? new Date(deadline).toLocaleString()}
+          onChange={handleDeadlineChange}
+        />
       ),
       /** POSITIVE ACTION BUTTON PARAMS */
       positive: {

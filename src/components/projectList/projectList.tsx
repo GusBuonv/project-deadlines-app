@@ -17,10 +17,11 @@ import { ProjectListEntity, ProjectListDisplayOptions } from './types';
 import { fadeIn, fadeOutInstantly } from '../../styles/animations';
 import blurOnMouseUp from '../../util/blurOnMouseUp';
 import IconButton from '../icon-button';
-import useToggleEditMode from '../../hooks/useToggleEditMode';
 import getDifference from '../../util/getDifference';
 import { updateProjectListDisplay } from './projectListDisplaySlice';
 import useHandleTitleChange from '../project/useHandleTitleChange';
+import useEditMode from '../../hooks/useEditMode';
+import HiddenLabelTextInput from '../HiddenLabelTextInput';
 
 //
 // Styles
@@ -60,7 +61,7 @@ const H2 = styled.h2<{ $color?: string }>`
   color: ${({ $color }) => $color ?? '#000'};
 `;
 
-const HeaderInput = styled.input`
+const HeaderInput = styled(HiddenLabelTextInput)`
   ${ListHeaderCSS}
 `;
 
@@ -137,18 +138,17 @@ const ProjectListRaw = ({
 }: WithClassName<ProjectListProps>): JSX.Element => {
   const projectList = useProjectList(projectListId);
   const dispatch = useAppDispatch();
-  const [mode, setMode] = useState<'edit' | 'display'>('display');
+  const [mode, toggleEditMode] = useEditMode('display');
   useEffect(() => {
     if (onListChange) {
       onListChange();
     }
   }, [projectList, onListChange]);
-  const toggleEditMode = useToggleEditMode(setMode);
   const projectListDisplay = useProjectListDisplay(projectList ? projectList.projectListDisplayId : '');
   const [draft, setDraft] = useState<ProjectListDisplayOptions>({
     title: projectListDisplay?.title ?? '',
   });
-  const handleTitleChange = useHandleTitleChange(setDraft);
+  const handleDraftTitleChange = useHandleTitleChange(setDraft);
 
   if (!projectList || !projectListDisplay) {
     return (
@@ -213,19 +213,20 @@ const ProjectListRaw = ({
   ) => (shouldFlip(prev, current) && !shouldFlipButtons(prev, current));
 
   const modeParams = {
+    /** DISPLAY MODE */
     display: {
       header: (<H2 $color={displayColor}>{title}</H2>),
       label: 'Edit Project List',
       icon: 'pencil' as const,
       action: toggleEditMode,
     },
+    /** EDIT MODE */
     edit: {
       header: (
         <HeaderInput
           id={`${projectListId}-title`}
           value={draft.title ?? title}
-          type="text"
-          onChange={handleTitleChange}
+          onChange={handleDraftTitleChange}
         />
       ),
       label: 'Save Changes',

@@ -1,8 +1,9 @@
 import Head from 'next/head';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 import { GetStaticProps } from 'next';
 import { EntityState, nanoid } from '@reduxjs/toolkit';
+import { ChangeEventHandler, useState } from 'react';
 import * as homeContent from '../assets/home-content.json';
 import useAppSelector from '../hooks/useAppSelector';
 import useAppDispatch from '../hooks/useAppDispatch';
@@ -12,14 +13,19 @@ import LabelledIconButton from '../components/labelled-icon-button';
 import ControlsSpan from '../components/controls-span';
 import { WithClassName } from '../util/types';
 import destroyAllProjectLists from '../store/deadlines/actions/destroyAllProjectLists';
-import { CenteredFlexColumnCSS, SetPaddingX, VerticalListMarginCSS } from '../styles';
+import { CenteredFlexColumnCSS, CenteredFlexCSS, SetMarginX, SetPaddingX, VerticalListMarginCSS } from '../styles';
 import { selectProjectIds } from '../components/project/projectsSlice';
 import createProjectList from '../store/deadlines/actions/createProjectList';
 import { ProjectListEntity } from '../components/projectList/types';
 import { fadeIn, fadeOutInstantly } from '../styles/animations';
-import DefaultMain from '../layouts/partials/default-main';
-import DefaultFooter from '../layouts/partials/default-footer';
+import DefaultMain from '../partials/default-main';
+import DefaultFooter from '../partials/default-footer';
 import blurOnMouseUp from '../util/blurOnMouseUp';
+import selectPageTitle from '../store/globals/selectors/selectPageTitle';
+import IconButton from '../components/icon-button';
+import useEditMode from '../hooks/useEditMode';
+import updatePageTitle from '../store/globals/actions/updatePageTitle';
+import HiddenLabelTextInput from '../components/HiddenLabelTextInput';
 
 //
 // Styles
@@ -45,13 +51,48 @@ const StyledDefaultFooter = styled(DefaultFooter)`
   }
 `;
 
-const H1 = styled.h1`
-  margin-bottom: 5rem;
-
+const TitleCSS = css`
   text-align: center;
   line-height: 1.15;
   font-size: 4rem;
   font-weight: 700;
+`;
+
+const Title = styled.h1`
+  ${TitleCSS}
+`;
+
+const EditTitleButton = styled(IconButton)`
+  align-self: center;
+  justify-self: flex-start;
+  margin-left: 1rem;
+`;
+
+const TitleInput = styled(HiddenLabelTextInput)`
+  max-width: 100%;
+  input {
+    max-width: 100%;
+    ${TitleCSS}
+  }
+`;
+
+const TitleWrapper = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 6fr) minmax(0, 1fr);
+  grid-template-areas: ". title button";
+  /* ${CenteredFlexCSS} */
+  /* ${SetMarginX('auto')} */
+  margin-bottom: 5rem;
+
+  &>${Title},
+  &>${TitleInput} {
+    grid-area: title;
+  }
+
+  &>${EditTitleButton} {
+    grid-area: button;
+  }
 `;
 
 const StyledProjectList = styled(ProjectList)`
@@ -69,13 +110,11 @@ const StyledMain = styled(DefaultMain)<{ $tall: boolean }>`
 //
 
 export interface HomeProps {
-  title: string,
   description: string,
   favicon: string,
 }
 
 const HomeRaw = ({
-  title,
   description,
   favicon,
   className,
@@ -84,6 +123,12 @@ const HomeRaw = ({
   const projectIds = useAppSelector(selectProjectIds);
   const projectLists = useAppSelector((state) => state.projectLists);
   const dispatch = useAppDispatch();
+  const pageTitle = useAppSelector(selectPageTitle);
+  const [mode, toggleEditMode] = useEditMode('display');
+  const [draft, setDraft] = useState<string>(pageTitle);
+  const handleDraftChange: ChangeEventHandler<HTMLInputElement> = (
+    (e) => setDraft(e.target.value)
+  );
 
   const flipKey = projectListIds.join() + projectIds.join();
 
@@ -117,6 +162,32 @@ const HomeRaw = ({
     current: EntityState<ProjectListEntity>,
   ) => (!shouldFlipButton(prev, current));
 
+  const modeParams = {
+    /** DISPLAY MODE */
+    display: {
+      header: (<Title>{pageTitle}</Title>),
+      label: 'Edit Project List',
+      icon: 'pencil' as const,
+      action: toggleEditMode,
+    },
+    /** EDIT MODE */
+    edit: {
+      header: (
+        <TitleInput
+          id="page-title"
+          value={draft}
+          onChange={handleDraftChange}
+        />
+      ),
+      label: 'Save Changes',
+      icon: 'save' as const,
+      action() {
+        if (draft !== pageTitle) dispatch(updatePageTitle(draft));
+        toggleEditMode();
+      },
+    },
+  };
+
   return (
     <StyledFlipper
       className={className}
@@ -136,7 +207,7 @@ const HomeRaw = ({
       }}
     >
       <Head>
-        <title>{title}</title>
+        <title>{pageTitle}</title>
         <meta name="description" content={description} />
         <meta name="robots" content="noindex" />
         <link rel="icon" href={favicon} />
@@ -144,7 +215,19 @@ const HomeRaw = ({
 
       <StyledMain $tall={projectListIds.length !== 0}>
         <Flipped flipId="heading" translate>
-          <H1>{title}</H1>
+          <TitleWrapper>
+            {modeParams[mode].header}
+            <EditTitleButton
+                // icon={modeParams[mode].icon}
+              icon={modeParams[mode].icon}
+              size="medium"
+                // label={modeParams[mode].label}
+              label={modeParams[mode].label}
+              iconFocusColor="#0f0"
+              onClick={modeParams[mode].action}
+              onMouseUp={blurOnMouseUp}
+            />
+          </TitleWrapper>
         </Flipped>
         {projectListIds.map((id) => (
           <Flipped
