@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, createEntityAdapter, PayloadAction } from '@reduxjs/toolkit';
-import { CreateProjectInListActionType, CreateProjectInListPayload } from '../../store/actions/createProjectInList';
-import { DestroyAllProjectListsActionType } from '../../store/actions/destroyAllProjectLists';
-import { DestroyProjectListActionType, DestroyProjectListPayload } from '../../store/actions/destroyProjectList';
-import { RemoveAllProjectsInListActionType, RemoveAllProjectsInListPayload } from '../../store/actions/removeAllProjectsInList';
-import { RemoveProjectInListActionType, RemoveProjectInListPayload } from '../../store/actions/removeProjectInList';
+import { CreateProjectInListActionType, CreateProjectInListPayload } from '../../store/deadlines/actions/createProjectInList';
+import { DestroyAllProjectListsActionType } from '../../store/deadlines/actions/destroyAllProjectLists';
+import { DestroyProjectListActionType, DestroyProjectListPayload } from '../../store/deadlines/actions/destroyProjectList';
+import { RemoveAllProjectsInListActionType, RemoveAllProjectsInListPayload } from '../../store/deadlines/actions/removeAllProjectsInList';
+import { RemoveProjectInListActionType, RemoveProjectInListPayload } from '../../store/deadlines/actions/removeProjectInList';
 import makeEntityStateSelector from '../../util/makeEntityStateSelector';
 import { ProjectEntity } from './types';
 

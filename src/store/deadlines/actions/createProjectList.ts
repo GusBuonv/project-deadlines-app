@@ -1,5 +1,5 @@
 import { createAction, EntityId } from '@reduxjs/toolkit';
-import { ProjectListDisplayOptions } from '../../components/projectList/types';
+import { ProjectListDisplayOptions } from '../../../components/projectList/types';
 
 export const CreateProjectListActionType = 'deadlines/createProjectList';
 

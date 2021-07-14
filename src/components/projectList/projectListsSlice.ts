@@ -1,10 +1,10 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CreateProjectInListActionType, CreateProjectInListPayload } from '../../store/actions/createProjectInList';
-import { CreateProjectListActionType, CreateProjectListPayload } from '../../store/actions/createProjectList';
-import { DestroyAllProjectListsActionType } from '../../store/actions/destroyAllProjectLists';
-import { DestroyProjectListActionType, DestroyProjectListPayload } from '../../store/actions/destroyProjectList';
-import { RemoveAllProjectsInListActionType, RemoveAllProjectsInListPayload } from '../../store/actions/removeAllProjectsInList';
-import { RemoveProjectInListActionType, RemoveProjectInListPayload } from '../../store/actions/removeProjectInList';
+import { CreateProjectInListActionType, CreateProjectInListPayload } from '../../store/deadlines/actions/createProjectInList';
+import { CreateProjectListActionType, CreateProjectListPayload } from '../../store/deadlines/actions/createProjectList';
+import { DestroyAllProjectListsActionType } from '../../store/deadlines/actions/destroyAllProjectLists';
+import { DestroyProjectListActionType, DestroyProjectListPayload } from '../../store/deadlines/actions/destroyProjectList';
+import { RemoveAllProjectsInListActionType, RemoveAllProjectsInListPayload } from '../../store/deadlines/actions/removeAllProjectsInList';
+import { RemoveProjectInListActionType, RemoveProjectInListPayload } from '../../store/deadlines/actions/removeProjectInList';
 import makeEntityStateSelector from '../../util/makeEntityStateSelector';
 import { ProjectListEntity } from './types';
 

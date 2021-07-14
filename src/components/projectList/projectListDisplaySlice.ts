@@ -1,7 +1,7 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CreateProjectListActionType, CreateProjectListPayload } from '../../store/actions/createProjectList';
-import { DestroyAllProjectListsActionType } from '../../store/actions/destroyAllProjectLists';
-import { DestroyProjectListActionType, DestroyProjectListPayload } from '../../store/actions/destroyProjectList';
+import { CreateProjectListActionType, CreateProjectListPayload } from '../../store/deadlines/actions/createProjectList';
+import { DestroyAllProjectListsActionType } from '../../store/deadlines/actions/destroyAllProjectLists';
+import { DestroyProjectListActionType, DestroyProjectListPayload } from '../../store/deadlines/actions/destroyProjectList';
 import makeEntityStateSelector from '../../util/makeEntityStateSelector';
 import { ProjectListDisplayEntity } from './types';
 

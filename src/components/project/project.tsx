@@ -8,7 +8,7 @@ import DateTime from '../date-time';
 import useProject from './useProject';
 import IconButton from '../icon-button';
 import useAppDispatch from '../../hooks/useAppDispatch';
-import removeProjectInList from '../../store/actions/removeProjectInList';
+import removeProjectInList from '../../store/deadlines/actions/removeProjectInList';
 import { updateProject } from './projectsSlice';
 import getDifference from '../../util/getDifference';
 import { ProjectOptions } from './types';
