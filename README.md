@@ -1,6 +1,8 @@
 # Koala - Web Engineering Challenge - Deadline Countdown App
 
-A simple web app that displays a countdown timer with
+A small, sleek web app that displays lists of customizable countdown timers. Any changes you make will still be there if you leave and come back!
+
+![Deadline management app](/misc/Screenshot-from-2021-07-14-12-32-34.png)
 
 ## Getting Started
 
@@ -20,6 +22,10 @@ A simple web app that displays a countdown timer with
 
 4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Developers Note
+
+I experimented with a lot new packages and tools in this project. Super proud of how this turned out! I did my best to keep the code itself clean and extensible, but there's no doubt I've made one or more rookie mistakes. A great learning experience through and through! Please try not to judge too harshly 🙏🙇.
+
 ## The Backstory
 
 A high-profile client has hired your company to build a countdown clock web app to help them keep track of an internal deadline. Since this deadline keeps changing, the countdown must be able to be reset and adjusted as necessary.
@@ -30,8 +36,8 @@ The original developer tasked with building the app was too distracted watching 
 
 ## Requirements
 
-- [ ] There must be an input that takes a number or set of numbers that can be used to set and reset a countdown timer.
-- [ ] To us, code quality is just as important as feature execution. Without being prescriptive, any decisions you make to refactor, test, style, or fix anything in the existing code are just as important as successfully building the countdown itself.
+- [x] There must be an input that takes a number or set of numbers that can be used to set and reset a countdown timer.
+- [x] To us, code quality is just as important as feature execution. Without being prescriptive, any decisions you make to refactor, test, style, or fix anything in the existing code are just as important as successfully building the countdown itself.
 - [x] The application must make use of the following dependencies:
   - React
   - TypeScript
@@ -40,7 +46,7 @@ The original developer tasked with building the app was too distracted watching 
 ### Notes
 
 - [x] The codebase is intentionally sloppy. We want to encourage you to change any if not all of it as you see fit.
-- [ ] We've connected the app to an API call that returns a configuration JSON. As you work on the app, we encourage you to use this data to help inform your styling.
+- [~] We've connected the app to an API call that returns a configuration JSON. As you work on the app, we encourage you to use this data to help inform your styling.
 - [x] There is no limit to the scope of this project. Creativity, critical thinking, and an eye for stability and extensibility are paramount to the culture here at Koala.
 - [x] Enjoy yourself. We want you to show off. Make up requirements and solve problems we haven't asked you to solve if you think they'd be exciting to build. We want to see from you a genuine passion and a love of the craft.
 
@@ -48,13 +54,13 @@ The original developer tasked with building the app was too distracted watching 
 
 - [x] Support multiple deadlines associated with different projects
 - [x] Group deadlines by organization/team (e.g. - "Company Wide", "HR", "Engineering", etc.)
-- [ ] Set the countdown either by number of days, hours, minutes from the current time OR datetime input
 - [x] Countdown shows deadline and time until deadline
-- [ ] Resetting the countdown should generate a calendar event
 - [x] Changes should persist across page visits (i.e. state is stored locally)
 
 ### Additional Feature Concepts
 
+- Set the countdown either by number of days, hours, minutes from the current time OR datetime input
+- Resetting the countdown should generate a calendar event
 - Deadlines and deadline groups can be customized with colors & icons
 - State is persisted on the backend and fetched by users
 - User login with admin and regular users
