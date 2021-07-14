@@ -62,7 +62,11 @@ const H2 = styled.h2<{ $color?: string }>`
 `;
 
 const HeaderInput = styled(HiddenLabelTextInput)`
+  max-width: 80%;
   ${ListHeaderCSS}
+  input {
+    max-width: 100%;
+  }
 `;
 
 const TopBarDiv = styled.div`
