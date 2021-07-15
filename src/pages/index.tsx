@@ -12,7 +12,7 @@ import ProjectList from '../components/projectList/projectList';
 import ControlsSpan from '../components/ui/controls-span';
 import { WithClassName } from '../util/types';
 import destroyAllProjectLists from '../store/deadlines/actions/destroyAllProjectLists';
-import { CenteredFlexColumnCSS, CenteredFlexCSS, SetMarginX, SetPaddingX, VerticalListMarginCSS } from '../styles';
+import { CenteredFlexColumnCSS, SetPaddingX, VerticalListMarginCSS } from '../styles';
 import { selectProjectIds } from '../components/project/projectsSlice';
 import createProjectList from '../store/deadlines/actions/createProjectList';
 import { ProjectListEntity } from '../components/projectList/types';
@@ -53,9 +53,14 @@ const StyledDefaultFooter = styled(DefaultFooter)`
 
 const TitleCSS = css`
   text-align: center;
-  line-height: 1.15;
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: 700;
+
+  @media (min-width: 481) {
+    line-height: 1.15;
+    font-size: 4rem;
+    font-weight: 700;
+  }
 `;
 
 const Title = styled.h1`
@@ -63,35 +68,48 @@ const Title = styled.h1`
 `;
 
 const EditTitleButton = styled(IconButton)`
-  align-self: center;
-  justify-self: flex-start;
-  margin-left: 1rem;
 `;
 
 const TitleInput = styled(HiddenLabelTextInput)`
-  max-width: 100%;
   input {
-    max-width: 100%;
     ${TitleCSS}
   }
 `;
 
 const TitleWrapper = styled.div`
   width: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 6fr) minmax(0, 1fr);
-  grid-template-areas: ". title button";
-  /* ${CenteredFlexCSS} */
-  /* ${SetMarginX('auto')} */
   margin-bottom: 5rem;
 
-  &>${Title},
-  &>${TitleInput} {
-    grid-area: title;
-  }
+  display: grid;
+  grid-auto-flow: rows;
 
   &>${EditTitleButton} {
-    grid-area: button;
+    justify-self: flex-end;
+  }
+
+  @media (min-width: 481px) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, var(--title-column-weighting)) minmax(0, 1fr);
+    grid-template-areas: ". title button";
+    column-gap: var(--column-gap);
+
+    &>${Title},
+    &>${TitleInput} {
+      grid-area: title;
+    }
+
+    &>${EditTitleButton} {
+      max-width: 100%;
+
+      grid-area: button;
+      align-self: center;
+      justify-self: flex-start;
+
+      input {
+        max-width: 100%;
+      }
+    }
+    --title-column-weighting: 6fr;
+    --column-gap: 0.5rem;
   }
 `;
 
