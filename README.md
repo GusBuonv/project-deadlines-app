@@ -2,6 +2,8 @@
 
 A small, sleek web app that displays lists of customizable countdown timers. Any changes you make will still be there if you leave and come back!
 
+Check out the live example [here](https://pensive-mayer-e9b80d.netlify.app/)!
+
 ![Deadline management app](/misc/Screenshot-from-2021-07-14-12-32-34.png)
 
 ## Getting Started
