@@ -185,6 +185,7 @@ const HomeRaw = ({
         <meta name="description" content={description} />
         <meta name="robots" content="noindex" />
         <link rel="icon" href={favicon} />
+        <html lang="en" />
       </Head>
 
       <StyledMain $tall={projectListIds.length !== 0}>
