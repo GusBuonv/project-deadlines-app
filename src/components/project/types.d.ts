@@ -1,5 +1,5 @@
 import { EntityId } from '@reduxjs/toolkit';
-import { HasEntityId } from '../../util/types';
+import { HasEntityId, HeaderTag } from '../../util/types';
 
 export interface ProjectOptions {
   title: string;
@@ -10,4 +10,9 @@ export interface ProjectOptions {
 
 export interface ProjectEntity extends HasEntityId, ProjectOptions {
   projectListId: EntityId;
+}
+
+export interface ProjectProps {
+  id: EntityId,
+  headerAs?: HeaderTag,
 }

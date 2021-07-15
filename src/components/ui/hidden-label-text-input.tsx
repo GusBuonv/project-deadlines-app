@@ -1,23 +1,22 @@
-import { ChangeEventHandler } from 'react';
+import { nanoid } from '@reduxjs/toolkit';
+import { ChangeEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import { HasClassName } from '../../util/types';
 import SrOnlyLabel from './sr-only-label';
 
 interface HiddenLabelTextInputProps {
   value: string,
-  id: string,
-  onChange: ChangeEventHandler<HTMLElement>,
+  onChange: ChangeEventHandler<HTMLInputElement>,
 }
 
 function HiddenLabelTextInputRaw({
   value,
   onChange,
-  id,
   className,
 }: HiddenLabelTextInputProps & HasClassName): JSX.Element {
+  const [id] = useState(nanoid());
   return (
     <div className={className}>
-      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <SrOnlyLabel htmlFor={id}>
         Project Title
       </SrOnlyLabel>

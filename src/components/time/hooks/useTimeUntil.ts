@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import getCurrentTimeUntil from '../util/getCurrentTimeUntil';
-import DurationStateController from '../util/DurationStateController';
+import DurationStateController from '../../../util/DurationStateController';
+import getCurrentTimeUntil from '../../../util/getCurrentTimeUntil';
 
 /**
  * Provides a new state object representing the time remaining until a given

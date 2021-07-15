@@ -1,14 +1,13 @@
 import Head from 'next/head';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 import { GetStaticProps } from 'next';
 import { EntityState, nanoid } from '@reduxjs/toolkit';
-import { ChangeEventHandler, useState } from 'react';
+import { useCallback } from 'react';
 import * as homeContent from '../assets/home-content.json';
 import useAppSelector from '../hooks/useAppSelector';
 import useAppDispatch from '../hooks/useAppDispatch';
-import { selectProjectListIds } from '../components/projectList/projectListsSlice';
-import ProjectList from '../components/projectList/projectList';
+import ProjectList from '../components/projectList/project-list';
 import ControlsSpan from '../components/ui/controls-span';
 import { WithClassName } from '../util/types';
 import destroyAllProjectLists from '../store/deadlines/actions/destroyAllProjectLists';
@@ -21,11 +20,10 @@ import DefaultMain from '../partials/default-main';
 import DefaultFooter from '../partials/default-footer';
 import blurOnMouseUp from '../util/blurOnMouseUp';
 import selectPageTitle from '../store/globals/selectors/selectPageTitle';
-import useEditMode from '../hooks/useEditMode';
-import updatePageTitle from '../store/globals/actions/updatePageTitle';
-import HiddenLabelTextInput from '../components/ui/hidden-label-text-input';
-import IconButton from '../components/ui/icon-button';
 import LabelledIconButton from '../components/ui/labelled-icon-button';
+import { selectProjectListIds } from '../components/projectList/slices/projectListsSlice';
+import EditableHeadingWithButton from '../components/ui/editable-heading-with-button';
+import updatePageTitle from '../store/globals/actions/updatePageTitle';
 
 //
 // Styles
@@ -51,40 +49,27 @@ const StyledDefaultFooter = styled(DefaultFooter)`
   }
 `;
 
-const TitleCSS = css`
-  text-align: center;
-  font-size: 3rem;
-  font-weight: 700;
-
-  @media (min-width: 481) {
-    line-height: 1.15;
-    font-size: 4rem;
-    font-weight: 700;
-  }
-`;
-
-const Title = styled.h1`
-  ${TitleCSS}
-`;
-
-const EditTitleButton = styled(IconButton)`
-`;
-
-const TitleInput = styled(HiddenLabelTextInput)`
-  input {
-    ${TitleCSS}
-  }
-`;
-
-const TitleWrapper = styled.div`
+const EditablePageTitle = styled(EditableHeadingWithButton)`
   width: 100%;
   margin-bottom: 5rem;
 
   display: grid;
   grid-auto-flow: rows;
 
-  &>${EditTitleButton} {
+  &>button {
     justify-self: flex-end;
+  }
+
+  h1, input {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 700;
+
+    @media (min-width: 481) {
+      line-height: 1.15;
+      font-size: 4rem;
+      font-weight: 700;
+    }
   }
 
   @media (min-width: 481px) {
@@ -92,21 +77,22 @@ const TitleWrapper = styled.div`
     grid-template-areas: ". title button";
     column-gap: var(--column-gap);
 
-    &>${Title},
-    &>${TitleInput} {
+    &>div,
+    &>h1 {
       grid-area: title;
+      max-width: 100%;
+
+      input {
+        max-width: 100%;
+      }
     }
 
-    &>${EditTitleButton} {
+    &>button {
       max-width: 100%;
 
       grid-area: button;
       align-self: center;
       justify-self: flex-start;
-
-      input {
-        max-width: 100%;
-      }
     }
     --title-column-weighting: 6fr;
     --column-gap: 0.5rem;
@@ -142,12 +128,6 @@ const HomeRaw = ({
   const projectLists = useAppSelector((state) => state.projectLists);
   const dispatch = useAppDispatch();
   const pageTitle = useAppSelector(selectPageTitle);
-  const [mode, toggleEditMode] = useEditMode('display');
-  const [draft, setDraft] = useState<string>(pageTitle);
-  const handleDraftChange: ChangeEventHandler<HTMLInputElement> = (
-    (e) => setDraft(e.target.value)
-  );
-
   const flipKey = projectListIds.join() + projectIds.join();
 
   const spring = {
@@ -156,14 +136,14 @@ const HomeRaw = ({
     overshootClamping: false,
   };
 
-  const createNewList = () => dispatch(createProjectList({
+  const createNewList = useCallback(() => dispatch(createProjectList({
     projectListId: nanoid(),
     projectListDisplayId: nanoid(),
-  }));
+  })), [dispatch]);
 
-  const deleteAllLists = () => dispatch(destroyAllProjectLists());
+  const deleteAllLists = useCallback(() => dispatch(destroyAllProjectLists()), [dispatch]);
 
-  const shouldFlipButton = (
+  const shouldFlipButton = useCallback((
     prev: EntityState<ProjectListEntity>,
     current: EntityState<ProjectListEntity>,
   ) => {
@@ -173,38 +153,14 @@ const HomeRaw = ({
       (prevLength === 0 || currentLength === 0)
       && prevLength !== currentLength
     );
-  };
+  }, []);
 
-  const shouldFlipControls = (
+  const shouldFlipControls = useCallback((
     prev: EntityState<ProjectListEntity>,
     current: EntityState<ProjectListEntity>,
-  ) => (!shouldFlipButton(prev, current));
+  ) => (!shouldFlipButton(prev, current)), [shouldFlipButton]);
 
-  const modeParams = {
-    /** DISPLAY MODE */
-    display: {
-      header: (<Title>{pageTitle}</Title>),
-      label: 'Edit Project List',
-      icon: 'pencil' as const,
-      action: toggleEditMode,
-    },
-    /** EDIT MODE */
-    edit: {
-      header: (
-        <TitleInput
-          id="page-title"
-          value={draft}
-          onChange={handleDraftChange}
-        />
-      ),
-      label: 'Save Changes',
-      icon: 'save' as const,
-      action() {
-        if (draft !== pageTitle) dispatch(updatePageTitle(draft));
-        toggleEditMode();
-      },
-    },
-  };
+  const updateTitle = useCallback((value: string) => dispatch(updatePageTitle(value)), [dispatch]);
 
   return (
     <StyledFlipper
@@ -233,19 +189,13 @@ const HomeRaw = ({
 
       <StyledMain $tall={projectListIds.length !== 0}>
         <Flipped flipId="heading" translate>
-          <TitleWrapper>
-            {modeParams[mode].header}
-            <EditTitleButton
-                // icon={modeParams[mode].icon}
-              icon={modeParams[mode].icon}
-              size="medium"
-                // label={modeParams[mode].label}
-              label={modeParams[mode].label}
-              iconFocusColor="#0f0"
-              onClick={modeParams[mode].action}
-              onMouseUp={blurOnMouseUp}
-            />
-          </TitleWrapper>
+          <EditablePageTitle
+            text={pageTitle}
+            onChange={updateTitle}
+            saveLabel="Save New Page Title"
+            editLabel="Edit Page Title"
+            headingTag="h1"
+          />
         </Flipped>
         {projectListIds.map((id) => (
           <Flipped
@@ -256,7 +206,7 @@ const HomeRaw = ({
             translate
           >
             <StyledProjectList
-              headerAs="h2"
+              headingTag="h2"
               id={id}
             />
           </Flipped>

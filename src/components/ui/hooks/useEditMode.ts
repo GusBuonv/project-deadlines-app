@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { EditModes } from '../util/types';
+import { EditModes } from '../../../util/types';
 import useToggleEditMode from './useToggleEditMode';
 
 export default function useEditMode(initialMode: EditModes): [EditModes, () => void] {

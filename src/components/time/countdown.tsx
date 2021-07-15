@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import useTimeUntil from '../../hooks/useTimeUntil';
 import gtDuration from '../../util/gtDuration';
 import { WithClassName } from '../../util/types';
 import Duration from './duration';
+import useTimeUntil from './hooks/useTimeUntil';
 
 //
 // Styles

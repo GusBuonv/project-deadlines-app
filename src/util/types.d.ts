@@ -30,4 +30,12 @@ type StateWithSlice<S extends Slice> = {
 
 type EditModes = 'edit' | 'display';
 
-type HeaderTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'span' ;
+type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'span' ;
+
+type Mapped<T extends string | number | symbol, V> = {
+  [K in T]: V
+}
+
+type FlipperDecisionData = EntityState<ProjectListEntity>;
+
+type FlipDecisionCallback = (prev: FlipperDecisionData, current: FlipperDecisionData) => boolean;
