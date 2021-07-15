@@ -4,7 +4,7 @@ import { Flipped } from 'react-flip-toolkit';
 import { useEffect, useState } from 'react';
 import useAppDispatch from '../../hooks/useAppDispatch';
 import { CenteredFlexColumnCSS, VerticalListMarginCSS } from '../../styles';
-import { WithClassName } from '../../util/types';
+import { HeaderTag, WithClassName } from '../../util/types';
 import Project from '../project/project';
 import useProjectList from './useProjectList';
 import ControlsSpan from '../ui/controls-span';
@@ -22,6 +22,7 @@ import useEditMode from '../../hooks/useEditMode';
 import HiddenLabelTextInput from '../ui/hidden-label-text-input';
 import IconButton from '../ui/icon-button';
 import LabelledIconButton from '../ui/labelled-icon-button';
+import headerTagMap from '../../util/headerTagMap';
 
 //
 // Styles
@@ -55,7 +56,7 @@ const ListHeaderCSS = css`
   }
 `;
 
-const H2 = styled.h2<{ $color?: string }>`
+const Header = styled.h2<{ $color?: string }>`
   ${ListHeaderCSS}
 
   color: ${({ $color }) => $color ?? '#000'};
@@ -131,6 +132,7 @@ const StyledProject = styled(Project)`
 //
 interface ProjectListProps {
   id: EntityId,
+  headerAs?: HeaderTag,
   onListChange?: () => void,
 }
 
@@ -138,6 +140,7 @@ const ProjectListRaw = ({
   className,
   onListChange,
   id: projectListId,
+  headerAs = 'h2',
   ...rest
 }: WithClassName<ProjectListProps>): JSX.Element => {
   const projectList = useProjectList(projectListId);
@@ -219,7 +222,7 @@ const ProjectListRaw = ({
   const modeParams = {
     /** DISPLAY MODE */
     display: {
-      header: (<H2 $color={displayColor}>{title}</H2>),
+      header: (<Header as={headerAs} $color={displayColor}>{title}</Header>),
       label: 'Edit Project List',
       icon: 'pencil' as const,
       action: toggleEditMode,
@@ -274,7 +277,10 @@ const ProjectListRaw = ({
             translate
             shouldFlip={shouldFlip}
           >
-            <StyledProject id={projectId} />
+            <StyledProject
+              id={projectId}
+              headerAs={headerTagMap[headerAs]}
+            />
           </Flipped>
         ))}
         <Flipped flipId={`${projectListId.toString()}-controls`} translate shouldFlip={shouldFlipControls}>

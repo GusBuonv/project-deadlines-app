@@ -238,7 +238,7 @@ const HomeRaw = ({
             translate
           >
             <StyledProjectList
-              key={id}
+              headerAs="h2"
               id={id}
             />
           </Flipped>

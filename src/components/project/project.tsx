@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import { EntityId } from '@reduxjs/toolkit';
 import { useState } from 'react';
 import { CenteredFlexCSS } from '../../styles';
-import { WithClassName } from '../../util/types';
+import { HeaderTag, WithClassName } from '../../util/types';
 import useProject from './useProject';
 import useAppDispatch from '../../hooks/useAppDispatch';
 import removeProjectInList from '../../store/deadlines/actions/removeProjectInList';
@@ -97,7 +97,7 @@ const WarnDiv = styled.div`
   color: ${({ theme }) => theme.colors.alert};
 `;
 
-const H2 = styled.h2<{ $color?: string }>`
+const Header = styled.h3<{ $color?: string }>`
   ${HeaderCSS}
   margin-bottom: 0.25rem;
 
@@ -166,6 +166,7 @@ const StyledIconButton = styled(IconButton)<{ $bgColor: string }>`
 
 export interface ProjectProps {
   id: EntityId,
+  headerAs?: HeaderTag,
 }
 
 /**
@@ -174,6 +175,7 @@ export interface ProjectProps {
 const ProjectRaw = ({
   className,
   id,
+  headerAs = 'h3',
   ...rest
 }: WithClassName<ProjectProps>): JSX.Element => {
   const project = useProject(id);
@@ -265,7 +267,7 @@ const ProjectRaw = ({
     display: {
       /** HEADER ELEMENT */
       header: (
-        <H2 $color={displayColor}>{title}</H2>
+        <Header as={headerAs} $color={displayColor}>{title}</Header>
       ),
       /** DEADLINE ELEMENT */
       deadline: (
