@@ -20,6 +20,7 @@ const LabelSpan = styled.span<{
 }>`
   margin-left: ${({ $marginLeft }) => $marginLeft};
 
+  text-align: center;
   font-size: ${({ $fontSize }) => $fontSize};
   font-weight: ${({ $fontWeight }) => $fontWeight};
 `;
