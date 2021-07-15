@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { EntityId } from '@reduxjs/toolkit';
-import { useState } from 'react';
+import { createRef, useState } from 'react';
 import { CenteredFlexCSS } from '../../styles';
 import { HeaderTag, WithClassName } from '../../util/types';
 import useProject from './useProject';
@@ -104,15 +104,18 @@ const Header = styled.h3<{ $color?: string }>`
   color: ${({ $color }) => $color ?? 'inherit'};
 `;
 
-const HeaderInput = styled(HiddenLabelTextInput)`
+const HeaderInput = styled(HiddenLabelTextInput)<{ $height: number | undefined }>`
+  height: ${({ $height }) => `${$height}px` ?? 'auto'};
+  margin-bottom: 0.25rem;
+
   input {
     max-width: 100%;
     ${HeaderCSS}
-    margin-bottom: 0.25rem;
     text-align: center;
 
     @media (min-width: 481px) {
       text-align: left;
+      font-size: 2.22rem;
     }
   }
 `;
@@ -188,6 +191,8 @@ const ProjectRaw = ({
   });
   const handleDraftTitleChange = useHandleTitleChange(setDraft);
   const handleDeadlineChange = useHandleDeadlineChange(setDraftDeadlineInvalid, setDraft);
+  const headerRef = createRef<HTMLHeadingElement>();
+  const [headerInputHeight, setHeaderInputHeight] = useState<undefined | number>();
 
   if (!project) {
     return (
@@ -212,6 +217,7 @@ const ProjectRaw = ({
       /** HEADER ELEMENT */
       header: (
         <HeaderInput
+          $height={headerInputHeight}
           id={`${id}-title`}
           value={draft.title ?? title}
           onChange={handleDraftTitleChange}
@@ -267,7 +273,7 @@ const ProjectRaw = ({
     display: {
       /** HEADER ELEMENT */
       header: (
-        <Header as={headerAs} $color={displayColor}>{title}</Header>
+        <Header as={headerAs} ref={headerRef} $color={displayColor}>{title}</Header>
       ),
       /** DEADLINE ELEMENT */
       deadline: (
@@ -277,7 +283,13 @@ const ProjectRaw = ({
       positive: {
         label: 'Edit Project',
         icon: 'pencil' as const,
-        action: toggleEditMode,
+        action() {
+          if (headerRef.current) {
+            const rect = headerRef.current.getBoundingClientRect();
+            setHeaderInputHeight(rect.height || (rect.bottom - rect.top));
+          }
+          toggleEditMode();
+        },
       },
       /** NEGATIVE ACTION BUTTON PARAMS */
       negative: {
