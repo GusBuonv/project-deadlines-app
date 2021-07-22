@@ -107,7 +107,7 @@ const ProjectListRaw = ({
   ...rest
 }: WithClassName<ProjectListRawProps>): JSX.Element => {
   const dispatch = useAppDispatch();
-  const setTitle = useSetProjectListTitle(dispatch, projectListId);
+  const setTitle = useSetProjectListTitle(dispatch, projectListDisplayId);
   const createProject = useCreateProject(dispatch, projectListId);
   const clearList = useClearProjectList(dispatch, projectIds, projectListId);
   const deleteList = useDeleteProjectList(

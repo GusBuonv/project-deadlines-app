@@ -5,9 +5,9 @@ import { updateProjectListDisplay } from '../slices/projectListDisplaySlice';
 
 export default function useSetProjectListTitle(
   dispatch: AppDispatch,
-  projectListId: EntityId,
+  projectListDisplayId: EntityId,
 ): (text: string) => void {
   return useCallback((text: string) => {
-    dispatch(updateProjectListDisplay({ id: projectListId, changes: { title: text } }));
-  }, [dispatch, projectListId]);
+    dispatch(updateProjectListDisplay({ id: projectListDisplayId, changes: { title: text } }));
+  }, [dispatch, projectListDisplayId]);
 }
