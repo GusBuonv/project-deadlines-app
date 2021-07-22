@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import styled from 'styled-components';
+import SrOnlyLabel from '../components/ui/sr-only-label';
 import { CenteredFlexCSS, SetPaddingY } from '../styles';
 import { WithClassName } from '../util/types';
 
@@ -23,14 +24,14 @@ const Footer = styled.footer`
 `;
 
 const Span = styled.span`
-  ${Footer}>& {
-    height: ${itemHeight};
+  ${Footer}>&:not(:first-child) {
     margin-left: 0.5rem;
   }
+`;
 
-  ${Footer}>&:first-child {
-    margin-left: 0;
-  }
+const IconLink = styled.a`
+  display: block;
+  padding: 4px;
 `;
 
 //
@@ -46,9 +47,30 @@ const DefaultFooterRaw = ({
 }: WithClassName<DefaultFooterProps>): JSX.Element => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <Footer className={className} {...rest}>
-    <Span>Made for</Span>
+    <Span>Made with 💜 by Gus Buonviri:</Span>
     <Span>
-      <img src="/koala-logo.png" alt="Koala Logo" width="108" height="24" />
+      <IconLink href="https://github.com/GusBuonv" rel="noopener">
+        <SrOnlyLabel as="span">Check out the source on GitHub!</SrOnlyLabel>
+        <img
+          src="/GitHub-Mark-64px.png"
+          alt="GitHub Octocat Logo"
+          width="32"
+          height="32"
+          srcSet="/GitHub-Mark-32px.png 32w, /GitHub-Mark-64px.png 64w"
+        />
+      </IconLink>
+    </Span>
+    <Span>
+      <IconLink href="https://www.linkedin.com/in/augustus-buonviri-344524ab" rel="noopener">
+        <SrOnlyLabel as="span">Connect with me on LinkedIn!</SrOnlyLabel>
+        <img
+          src="/LinkedIn-Mark-64px.png"
+          alt="LinkedIn Logo"
+          width="32"
+          height="32"
+          srcSet="/LinkedIn-Mark-32px.png 32w, /LinkedIn-Mark-64px.png 64w"
+        />
+      </IconLink>
     </Span>
   </Footer>
 );
