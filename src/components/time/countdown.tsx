@@ -9,9 +9,9 @@ import useTimeUntil from './hooks/useTimeUntil';
 //
 
 const StyledDuration = styled(Duration)<{
-  $color: string,
+  $status?: 'warn' | 'alert',
 }>`
-  color: ${({ $color }) => $color};
+  color: ${({ $status, theme }) => ($status ? theme.colors[$status] : '#000')};
 `;
 
 //
@@ -25,10 +25,13 @@ interface CountdownProps {
 }
 
 /**
- * Semantic \<time\> element that displays a duration of time
+ * Displays an active countdown, accurate to the second, towards an end date
  *
- * The time duration is formatted as `"#Y #M #D #h #m #s"`. The seconds field
+ * The time remaining is formatted as `"#Y #M #D #h #m #s"`. The seconds field
  * always displays, even when the duration is zero.
+ *
+ * If the duration exceeds one day, the element may wrap between `"#D"` and
+ * `"#h"`. Disable this behavior by setting the `wraps` prop to `false`.
  */
 const CountdownRaw = ({
   className,
@@ -37,22 +40,19 @@ const CountdownRaw = ({
 }: WithClassName<CountdownProps>): JSX.Element => {
   const duration = useTimeUntil(end);
 
-  let statusColor: string;
-  if (
-    !duration
-    || gtDuration(duration, { days: 7 })
-  ) {
-    statusColor = '#000';
-  } else if (gtDuration(duration, { days: 1 })) {
-    statusColor = '#d47700';
-  } else {
-    statusColor = '#d83737';
+  let status: 'warn' | 'alert' | undefined;
+  if (duration) {
+    if (gtDuration({ days: 1 }, duration)) {
+      status = 'alert';
+    } else if (gtDuration({ days: 7 }, duration)) {
+      status = 'warn';
+    }
   }
 
   return (
     <StyledDuration
       className={className}
-      $color={statusColor}
+      $status={status}
       duration={duration ?? { seconds: 0 }}
       wraps={wraps}
     />

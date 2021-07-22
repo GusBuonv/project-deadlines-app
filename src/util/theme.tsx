@@ -1,4 +1,11 @@
-import { DefaultTheme } from 'styled-components';
+export const defaultTheme = {
+  colors: {
+    warn: '#ec6f00',
+    alert: '#d83737',
+  },
+};
+
+type MyDefaultTheme = typeof defaultTheme
 
 /**
  * Taking advantage of TypeScript's declaration merging to provide type hints on
@@ -6,20 +13,8 @@ import { DefaultTheme } from 'styled-components';
  *
  * Learn more: https://blog.bitsrc.io/tips-for-using-typescript-with-styled-components-e5398755997f
  */
-
 declare module 'styled-components' {
-  // eslint-disable-next-line no-shadow, @typescript-eslint/no-empty-interface
-  export interface DefaultTheme {
-    colors: {
-      warn: string,
-      alert: string,
-    },
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  export interface DefaultTheme extends MyDefaultTheme {
   }
 }
-
-export const defaultTheme: DefaultTheme = {
-  colors: {
-    warn: '#d47700',
-    alert: '#d83737',
-  },
-};
