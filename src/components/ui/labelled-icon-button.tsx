@@ -2,23 +2,22 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import IconButton, { IconButtonProps } from './icon-button';
 import { IconSize } from './icon';
-import { CenteredFlexCSS } from '../../styles';
 import { WithClassName } from '../../util/types';
 
 //
 // Style
 //
 
-const WrapperSpan = styled.span`
-  ${CenteredFlexCSS}
-`;
-
-const LabelSpan = styled.span<{
-  $marginLeft: string,
+const WrapperSpan = styled.span<{
+  $columnGap: string,
   $fontSize: string,
   $fontWeight: string
 }>`
-  margin-left: ${({ $marginLeft }) => $marginLeft};
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-auto-flow: column;
+  column-gap: ${({ $columnGap }) => $columnGap};
 
   text-align: center;
   font-size: ${({ $fontSize }) => $fontSize};
@@ -31,19 +30,19 @@ const LabelSpan = styled.span<{
 
 type ValidIconSize = Exclude<IconSize, 'tiny'>;
 
-const labelMargin: { readonly [K in ValidIconSize]: string} = {
+const columnGaps: Readonly<Record<ValidIconSize, string>> = {
   small: '0.25rem',
   medium: '0.75rem',
   large: '1.25rem',
 };
 
-const labelSizes: { readonly [K in ValidIconSize]: string} = {
+const fontSizes: Readonly<Record<ValidIconSize, string>> = {
   small: '1.5rem',
   medium: '2.5rem',
   large: '3rem',
 };
 
-const labelWeights: { readonly [K in ValidIconSize]: string } = {
+const fontWeights: Readonly<Record<ValidIconSize, string>> = {
   small: '500',
   medium: '600',
   large: '700',
@@ -53,7 +52,7 @@ interface LabelledAddButtonProps extends Omit<IconButtonProps, 'size'> {
   size: ValidIconSize
 }
 
-const LabelledIconButtonRaw = ({
+const LabelledIconButton = ({
   className,
   size,
   icon,
@@ -64,8 +63,15 @@ const LabelledIconButtonRaw = ({
   onClick,
   ...rest
 }: WithClassName<LabelledAddButtonProps>): JSX.Element => (
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  <WrapperSpan className={className} {...rest}>
+  <WrapperSpan
+    // TODO: Remove spread after flip-toolkit is removed
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...rest}
+    className={className}
+    $columnGap={columnGaps[size]}
+    $fontSize={fontSizes[size]}
+    $fontWeight={fontWeights[size]}
+  >
     <IconButton
       size={size}
       icon={icon}
@@ -75,16 +81,9 @@ const LabelledIconButtonRaw = ({
       onMouseUp={onMouseUp}
       onClick={onClick}
     />
-    <LabelSpan
-      $marginLeft={labelMargin[size]}
-      $fontSize={labelSizes[size]}
-      $fontWeight={labelWeights[size]}
-    >
-      {label}
-    </LabelSpan>
+    <span>{label}</span>
   </WrapperSpan>
 );
 
-const LabelledIconButton = styled(memo(LabelledIconButtonRaw))``;
-
-export default LabelledIconButton;
+/** An \<IconButton\> with visible label text  */
+export default styled(memo(LabelledIconButton))``;
