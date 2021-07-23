@@ -5,7 +5,7 @@ import { EditModes, HasClassName, HeadingTag } from '../../util/types';
 import Heading from '../heading';
 import HiddenLabelTextInput from './hidden-label-text-input';
 
-export interface EditableHeadingParams {
+export interface EditableHeadingProps extends HasClassName {
   text: string,
   draft: string,
   onChange: ChangeEventHandler<HTMLInputElement>,
@@ -13,34 +13,36 @@ export interface EditableHeadingParams {
   headingTag?: HeadingTag,
 }
 
-const EditableHeadingRaw = ({
+const EditableHeading = ({
   text,
   draft,
   onChange,
   className,
-  headingTag,
+  headingTag = 'div',
   mode,
-}: EditableHeadingParams & HasClassName): JSX.Element => {
-  let component;
+}: EditableHeadingProps): JSX.Element => {
   switch (mode) {
     case 'display':
-      component = (<Heading className={className} as={headingTag ?? 'div'}>{text}</Heading>);
-      break;
+      return (
+        <Heading
+          className={className}
+          as={headingTag}
+        >
+          {text}
+        </Heading>
+      );
     case 'edit':
-      component = (
+      return (
         <HiddenLabelTextInput
+          className={className}
           value={draft}
           onChange={onChange}
         />
       );
-      break;
     default:
       assertModeIsKnown(mode);
   }
-
-  return component;
 };
 
-const EditableHeading = styled(EditableHeadingRaw)``;
-
-export default EditableHeading;
+/** A Heading that can be toggled into an edit mode */
+export default styled(EditableHeading)``;

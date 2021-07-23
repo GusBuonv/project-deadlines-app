@@ -12,6 +12,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-empty-interface': 0,
     'no-shadow': 'off',
+    'consistent-return': 'off',
     '@typescript-eslint/no-shadow': ['error'],
     'object-curly-newline': ['error', { ImportDeclaration: 'never' }],
     '@next/next/no-img-element': 0,
