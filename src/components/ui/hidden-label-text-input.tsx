@@ -4,16 +4,16 @@ import styled from 'styled-components';
 import { HasClassName } from '../../util/types';
 import SrOnlyLabel from './sr-only-label';
 
-interface HiddenLabelTextInputProps {
+interface HiddenLabelTextInputProps extends HasClassName {
   value: string,
   onChange: ChangeEventHandler<HTMLInputElement>,
 }
 
-function HiddenLabelTextInputRaw({
+const HiddenLabelTextInput = ({
   value,
   onChange,
   className,
-}: HiddenLabelTextInputProps & HasClassName): JSX.Element {
+}: HiddenLabelTextInputProps): JSX.Element => {
   const [id] = useState(nanoid());
   return (
     <div className={className}>
@@ -28,8 +28,7 @@ function HiddenLabelTextInputRaw({
       />
     </div>
   );
-}
+};
 
-const HiddenLabelTextInput = styled(HiddenLabelTextInputRaw)``;
-
-export default HiddenLabelTextInput;
+/** \<input type="text"\> with an accompanying label visible only to screen readers */
+export default styled(HiddenLabelTextInput)``;
