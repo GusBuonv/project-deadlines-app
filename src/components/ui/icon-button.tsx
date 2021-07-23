@@ -1,31 +1,28 @@
 import { memo, MouseEventHandler } from 'react';
 import styled from 'styled-components';
-import { WithClassName } from '../../util/types';
 import Icon, { IconType, IconSize, IconProps } from './icon';
 
 //
 // Style
 //
 
-const Button = styled.button<{ $color?: string, $focusColor?: string }>`
-  fill: ${({ $color }) => $color ?? 'inherit'};
+const Button = styled.button<{ $padding: string, $fill?: string, $focusFill?: string }>`
+  padding: ${({ $padding }) => $padding};
+
+  fill: ${({ $fill: $color }) => $color};
 
   &:hover,
   &:focus,
   &:active {
-      fill: ${({ $focusColor }) => $focusColor ?? '#0099ff'};
+      fill: ${({ $focusFill: $focusColor }) => $focusColor ?? '#0099ff'};
   }
-`;
-
-const StyledIcon = styled(Icon)<{ $margin: string }>`
-  margin: ${({ $margin }) => $margin};
 `;
 
 //
 // Component
 //
 
-const iconMargins: { readonly [K in IconSize]: string } = {
+const paddings: Readonly<Record<IconSize, string>> = {
   tiny: '8px',
   small: '0',
   medium: '0',
@@ -36,39 +33,40 @@ export interface IconButtonProps extends Omit<IconProps, 'color'> {
   size: IconSize,
   label: string,
   icon: IconType,
+  type?: 'button' | 'submit',
   iconColor?: string,
   iconFocusColor?: string,
   onMouseUp?: MouseEventHandler<HTMLButtonElement>,
   onClick?: MouseEventHandler<HTMLButtonElement>,
 }
 
-const IconButtonRaw = ({
+const IconButton = ({
   className,
   size,
   label,
   icon,
+  type = 'button',
   iconColor,
   iconFocusColor,
   onClick,
   onMouseUp,
-}: WithClassName<IconButtonProps>): JSX.Element => (
+}: IconButtonProps): JSX.Element => (
   <Button
-    $color={iconColor}
-    $focusColor={iconFocusColor}
+    $padding={paddings[size]}
+    $fill={iconColor}
+    $focusFill={iconFocusColor}
     className={className}
-    type="button"
+    type={type}
     aria-label={label}
     onClick={onClick}
     onMouseUp={onMouseUp}
   >
-    <StyledIcon
-      $margin={iconMargins[size]}
+    <Icon
       size={size}
       icon={icon}
     />
   </Button>
 );
 
-const IconButton = styled(memo(IconButtonRaw))``;
-
-export default IconButton;
+/** A \<button\> containing an SVG icon */
+export default styled(memo(IconButton))``;
